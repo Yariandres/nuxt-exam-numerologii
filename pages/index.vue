@@ -1,8 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
+
+if (!userStore.user) {
+  navigateTo('/auth/login');
+}
+</script>
 
 <template>
   <section class="flex flex-col items-center justify-center h-screen">
     <UCard>
+      <p class="text-right">{{ userStore.user?.email }}</p>
       <h1 class="text-2xl font-bold">Welcome to the Numerology Test!</h1>
       <p class="mt-4">
         You are about to take a test that will assess your knowledge of
@@ -21,6 +30,8 @@
       </p>
     </UCard>
 
-    <UButton class="mt-4">Start Test</UButton>
+    <UButton class="mt-4" color="indigo" size="lg" to="/student">
+      Start Test
+    </UButton>
   </section>
 </template>
