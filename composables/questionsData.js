@@ -1,6 +1,7 @@
 export const questions = [
   {
     id: 1,
+    slug: 'question-1',
     question: 'What is the capital of France?',
     answers: [
       { text: 'Berlin', isCorrect: false },
@@ -11,6 +12,7 @@ export const questions = [
   },
   {
     id: 2,
+    slug: 'question-2',
     question: 'What is 2 + 2?',
     answers: [
       { text: '3', isCorrect: false },
@@ -21,6 +23,7 @@ export const questions = [
   },
   {
     id: 3,
+    slug: 'question-3',
     question: 'What is the largest planet in our solar system?',
     answers: [
       { text: 'Earth', isCorrect: false },
@@ -31,6 +34,7 @@ export const questions = [
   },
   {
     id: 4,
+    slug: 'question-4',
     question: 'What is the boiling point of water?',
     answers: [
       { text: '100°C', isCorrect: true },
@@ -41,6 +45,7 @@ export const questions = [
   },
   {
     id: 5,
+    slug: 'question-5',
     question: 'What is the chemical symbol for gold?',
     answers: [
       { text: 'Au', isCorrect: true },
