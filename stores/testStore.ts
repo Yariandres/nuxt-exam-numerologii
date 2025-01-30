@@ -1,29 +1,23 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-// TODO: will be fetching from db
-import { questions } from '@/questionsData';
-
-interface AnswerSubmission {
-  questionId: number;
-  question: string;
-  selectedAnswer: string;
-  isCorrect: boolean;
-}
 
 export const useTestStore = defineStore('test', () => {
+  const test = useTest();
   const currentQuestionIndex = ref(0);
-  const selectedAnswers = ref<AnswerSubmission[]>([]);
+  const selectedAnswers = ref<any[]>([]);
   const isTestComplete = ref(false);
-  const passingScore = 70;
+  const passingScore = 50;
 
-  const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
+  const currentQuestion = computed(
+    () => test.questions[currentQuestionIndex.value]
+  );
   const currentAnswers = computed(() => currentQuestion.value?.answers || []);
 
   // Updated examResults to work with new submission structure
   const examResults = computed(() => {
-    const total = questions.length;
+    const total = test.questions.length;
     const correct = selectedAnswers.value.filter(
-      (answer) => answer.isCorrect
+      (answer: any) => answer.isCorrect
     ).length;
     const incorrect = total - correct;
     const percentage = Math.round((correct / total) * 100);
@@ -39,10 +33,10 @@ export const useTestStore = defineStore('test', () => {
   });
 
   const isLastQuestion = computed(() => {
-    return currentQuestionIndex.value === questions.length - 1;
+    return currentQuestionIndex.value === test.questions.length - 1;
   });
 
-  function selectAnswer(submission: AnswerSubmission) {
+  function selectAnswer(submission: any) {
     selectedAnswers.value[currentQuestionIndex.value] = submission;
   }
 
@@ -53,11 +47,11 @@ export const useTestStore = defineStore('test', () => {
   }
 
   function nextQuestion() {
-    if (currentQuestionIndex.value < questions.length - 1) {
+    if (currentQuestionIndex.value < test.questions.length - 1) {
       currentQuestionIndex.value++;
     } else {
       isTestComplete.value = true;
-      navigateTo('/student/exam');
+      navigateTo('/student/summary');
     }
   }
 
