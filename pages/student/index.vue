@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useTestStore } from '@/stores/testStore';
-
 const testStore = useTestStore();
+const questions = useTest();
 const staticTime = 60; // Static timer duration set by admin
+
+console.log(questions);
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user';
 
+const test = useTest();
 const userStore = useUserStore();
 
 if (!userStore.user) {
@@ -30,7 +31,7 @@ if (!userStore.user) {
       </p>
     </UCard>
 
-    <UButton class="mt-4" color="indigo" size="lg" to="/student">
+    <UButton class="mt-4" color="indigo" size="lg" :to="test.questions[0].path">
       Start Test
     </UButton>
   </section>
