@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/user';
-
-const test = useTest();
+import questionsData from '~/composables/questionsData';
 const userStore = useUserStore();
 
 if (!userStore.user) {
@@ -31,7 +29,12 @@ if (!userStore.user) {
       </p>
     </UCard>
 
-    <UButton class="mt-4" color="indigo" size="lg" :to="test.questions[0].path">
+    <UButton
+      class="mt-4"
+      color="indigo"
+      size="lg"
+      :to="`/student/exam/${questionsData[0].slug}`"
+    >
       Start Test
     </UButton>
   </section>
