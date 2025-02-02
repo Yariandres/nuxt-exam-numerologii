@@ -1,58 +1,77 @@
-export const questions = [
+export default [
   {
-    id: 1,
-    slug: 'question-1',
-    question: 'What is the capital of France?',
+    id: 'q1',
+    slug: 'life-path-number-september-15-1985',
+    title:
+      'What is the Life Path number for someone born on September 15, 1985?',
     answers: [
-      { text: 'Berlin', isCorrect: false },
-      { text: 'Madrid', isCorrect: false },
-      { text: 'Paris', isCorrect: true },
-      { text: 'Rome', isCorrect: false },
+      {
+        id: 'a1',
+        text: '7',
+        isCorrect: false,
+      },
+      {
+        id: 'a2',
+        text: '1',
+        isCorrect: true,
+      },
+      {
+        id: 'a3',
+        text: '9',
+        isCorrect: false,
+      },
+      {
+        id: 'a4',
+        text: '5',
+        isCorrect: false,
+      },
     ],
+    media: {
+      image: null,
+      audio: null,
+      video: null,
+    },
+    category: 'life-path',
+    difficulty: 'beginner',
+    createdAt: '2024-03-20T10:00:00Z',
+    updatedAt: '2024-03-20T10:00:00Z',
+    active: true,
   },
   {
-    id: 2,
-    slug: 'question-2',
-    question: 'What is 2 + 2?',
+    id: 'q2',
+    slug: 'numerology-planet-mars-number',
+    title: 'In numerology, what number represents the planet Mars?',
     answers: [
-      { text: '3', isCorrect: false },
-      { text: '4', isCorrect: true },
-      { text: '5', isCorrect: false },
-      { text: '6', isCorrect: false },
+      {
+        id: 'a1',
+        text: '9',
+        isCorrect: false,
+      },
+      {
+        id: 'a2',
+        text: '8',
+        isCorrect: false,
+      },
+      {
+        id: 'a3',
+        text: '6',
+        isCorrect: false,
+      },
+      {
+        id: 'a4',
+        text: '5',
+        isCorrect: true,
+      },
     ],
+    media: {
+      image: '/images/mars-planet.jpg',
+      audio: null,
+      video: 'dQw4w9WgXcQ',
+    },
+    category: 'planetary-numbers',
+    difficulty: 'intermediate',
+    createdAt: '2024-03-20T10:00:00Z',
+    updatedAt: '2024-03-20T10:00:00Z',
+    active: true,
   },
-  {
-    id: 3,
-    slug: 'question-3',
-    question: 'What is the largest planet in our solar system?',
-    answers: [
-      { text: 'Earth', isCorrect: false },
-      { text: 'Jupiter', isCorrect: true },
-      { text: 'Mars', isCorrect: false },
-      { text: 'Saturn', isCorrect: false },
-    ],
-  },
-  {
-    id: 4,
-    slug: 'question-4',
-    question: 'What is the boiling point of water?',
-    answers: [
-      { text: '100°C', isCorrect: true },
-      { text: '90°C', isCorrect: false },
-      { text: '80°C', isCorrect: false },
-      { text: '70°C', isCorrect: false },
-    ],
-  },
-  {
-    id: 5,
-    slug: 'question-5',
-    question: 'What is the chemical symbol for gold?',
-    answers: [
-      { text: 'Au', isCorrect: true },
-      { text: 'Ag', isCorrect: false },
-      { text: 'Pb', isCorrect: false },
-      { text: 'Fe', isCorrect: false },
-    ],
-  },
-  // ... add more questions up to 30
 ];
