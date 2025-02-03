@@ -7,5 +7,14 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@prisma/nuxt',
     '@vueuse/nuxt',
+    '@nuxtjs/supabase',
   ],
+  supabase: {
+    redirect: false,
+    redirectOptions: {
+      login: '/login',
+      callback: '/',
+      exclude: ['/*'],
+    },
+  },
 });
