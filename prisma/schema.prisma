@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,115 +14,50 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// User model
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      Role     @default(STUDENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  examResults ExamResult[]
-}
-
-enum Role {
-  ADMIN
-  STUDENT
-}
-
-// Question model
 model Question {
-  id         String     @id @default(uuid())
-  slug       String     @unique
-  title      String
-  category   Category
-  difficulty Difficulty
-  active     Boolean    @default(true)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  answers     Answer[]
+  explanation String
+  category    String
+  difficulty  String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  // Relations
-  answers       Answer[]
+  // Relation to ExamSession through ExamQuestion
   examQuestions ExamQuestion[]
 }
 
 model Answer {
-  id         String   @id @default(uuid())
+  id         String   @id @default(cuid())
   text       String
   isCorrect  Boolean
   questionId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relations
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id])
 }
 
-enum Category {
-  LIFE_PATH
-  DESTINY_NUMBER
-  SOUL_URGE
-  PERSONALITY_NUMBER
+model ExamSession {
+  id             String         @id @default(cuid())
+  studentName    String
+  startedAt      DateTime       @default(now())
+  completedAt    DateTime?
+  score          Float?
+  passed         Boolean?
+  questions      ExamQuestion[]
+  totalQuestions Int
 }
 
-enum Difficulty {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
-}
-
-// Exam Results
-model ExamResult {
-  id          String   @id @default(uuid())
-  userId      String
-  score       Float
-  passed      Boolean
-  startedAt   DateTime @default(now())
-  completedAt DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  user          User           @relation(fields: [userId], references: [id])
-  examQuestions ExamQuestion[]
-}
-
-// Junction table for exam questions and answers
 model ExamQuestion {
-  id         String   @id @default(uuid())
-  examId     String
-  questionId String
-  userAnswer String? // ID of the answer selected by user
-  isCorrect  Boolean?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String      @id @default(cuid())
+  examSession   ExamSession @relation(fields: [examSessionId], references: [id])
+  examSessionId String
+  question      Question    @relation(fields: [questionId], references: [id])
+  questionId    String
+  userAnswer    String?
+  isCorrect     Boolean?
+  answeredAt    DateTime?
 
-  // Relations
-  exam     ExamResult @relation(fields: [examId], references: [id])
-  question Question   @relation(fields: [questionId], references: [id])
-
-  @@unique([examId, questionId])
-}
-
-// Test Settings
-model TestSettings {
-  id                      String   @id @default(uuid())
-  timeLimit               Int // in minutes
-  questionsPerTest        Int
-  passingScore            Float // percentage
-  randomizeQuestions      Boolean  @default(true)
-  showFeedbackImmediately Boolean  @default(true)
-  allowRetake             Boolean  @default(true)
-  retakeWaitingPeriod     Int // in hours
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
-
-  // Category weights
-  lifepathWeight    Float @default(25)
-  destinyWeight     Float @default(25)
-  soulUrgeWeight    Float @default(25)
-  personalityWeight Float @default(25)
+  @@unique([examSessionId, questionId])
 }
