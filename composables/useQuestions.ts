@@ -4,7 +4,7 @@ export const useQuestions = () => {
   return {
     questions: questions.map((data: any) => ({
       ...data,
-      path: `/student/exam/${data.slug}`,
+      path: `/student/question/${data.slug}`,
     })),
   };
 };
