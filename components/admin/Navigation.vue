@@ -12,12 +12,6 @@ const routes = [
     icon: 'i-heroicons-cog-6-tooth',
   },
 ];
-
-const userStore = useUserStore();
-
-const handleLogout = () => {
-  userStore.logout();
-};
 </script>
 
 <template>
@@ -52,12 +46,8 @@ const handleLogout = () => {
         <!-- Right side -->
         <div class="flex items-center">
           <div class="flex-shrink-0">
-            <span class="text-sm text-gray-500 mr-4">{{
-              userStore.user?.email
-            }}</span>
-            <UButton color="red" variant="soft" size="sm" @click="handleLogout">
-              Logout
-            </UButton>
+            <span class="text-sm text-gray-500 mr-4">{{ 'user.email' }}</span>
+            <UButton color="red" variant="soft" size="sm"> Logout </UButton>
           </div>
         </div>
       </div>
