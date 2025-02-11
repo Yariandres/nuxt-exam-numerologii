@@ -22,10 +22,27 @@ const validateAndStart = async () => {
 
   isLoading.value = true;
   try {
+    // Initialize exam session
+    const response = await $fetch('/api/exam/initialize', {
+      method: 'POST',
+      body: {
+        studentName: studentName.value.trim(),
+      },
+    });
+
+    // Store exam session data
+    localStorage.setItem('examSessionId', response.id);
     localStorage.setItem('studentName', studentName.value.trim());
-    await navigateTo(`${questions[0].path}`);
+
+    // Navigate to first question
+    if (response.questionSlugs.length > 0) {
+      await navigateTo(`/student/question/${response.questionSlugs[0]}`);
+    } else {
+      throw new Error('No questions available');
+    }
   } catch (error) {
     console.error('Failed to start exam:', error);
+    nameError.value = 'Failed to start exam. Please try again.';
   } finally {
     isLoading.value = false;
   }
@@ -37,7 +54,6 @@ const validateAndStart = async () => {
     <h1 class="text-3xl font-bold mb-6">
       Welcome to the Numerology Certification Exam
     </h1>
-    <pre>{{ questions }}</pre>
     <div class="rounded-lg shadow-md p-6 mb-8">
       <h2 class="text-xl font-semibold mb-4">Exam Instructions</h2>
 
