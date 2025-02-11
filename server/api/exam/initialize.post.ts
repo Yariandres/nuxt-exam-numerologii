@@ -1,6 +1,5 @@
 import { defineEventHandler, H3Event } from 'h3';
 import prisma from '~/server/utils/prisma';
-import { Prisma } from '@prisma/client';
 
 interface InitializeExamRequest {
   studentName: string;
@@ -17,7 +16,7 @@ export default defineEventHandler(async (event: H3Event) => {
       });
     }
 
-    // Get 30 random active questions
+    // Get all active questions
     const questions = await prisma.question.findMany({
       where: {
         active: true,
@@ -26,14 +25,22 @@ export default defineEventHandler(async (event: H3Event) => {
         id: true,
         slug: true,
       },
+      // Get 30 random questions
+      take: 30,
       orderBy: {
         // Random ordering in Postgres
-        raw: Prisma.sql`RANDOM()`,
+        createdAt: 'asc',
       },
-      take: 30,
     });
 
-    // Create exam session with questions
+    if (questions.length === 0) {
+      throw createError({
+        statusCode: 500,
+        message: 'No questions available',
+      });
+    }
+
+    // Create new exam session with questions
     const examSession = await prisma.examSession.create({
       data: {
         studentName: body.studentName,
@@ -46,7 +53,7 @@ export default defineEventHandler(async (event: H3Event) => {
       },
       include: {
         questions: {
-          select: {
+          include: {
             question: {
               select: {
                 slug: true,
@@ -61,14 +68,12 @@ export default defineEventHandler(async (event: H3Event) => {
       id: examSession.id,
       questionSlugs: examSession.questions.map((q) => q.question.slug),
       totalQuestions: examSession.totalQuestions,
-      studentName: examSession.studentName,
-      startedAt: examSession.startedAt,
     };
   } catch (error) {
     console.error('Failed to initialize exam:', error);
     throw createError({
-      statusCode: 500,
-      message: 'Failed to initialize exam',
+      statusCode: error.statusCode || 500,
+      message: error.message || 'Failed to initialize exam',
     });
   }
 });
