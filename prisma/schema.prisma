@@ -56,7 +56,6 @@ model ExamQuestion {
   question      Question    @relation(fields: [questionId], references: [id])
   questionId    String
   userAnswer    String?
-  isCorrect     Boolean?
   answeredAt    DateTime?
 
   @@unique([examSessionId, questionId])
