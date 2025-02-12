@@ -98,6 +98,14 @@ const downloadCertificate = async () => {
     isDownloading.value = false;
   }
 };
+
+const exitExam = async () => {
+  // Clear all exam data
+  localStorage.removeItem('examSessionId');
+  localStorage.removeItem('studentName');
+  // Navigate to home page
+  await navigateTo('/');
+};
 </script>
 
 <template>
@@ -126,7 +134,7 @@ const downloadCertificate = async () => {
       <!-- Result Header -->
       <div
         class="p-6 rounded-lg"
-        :class="result.passed ? 'bg-green-500' : 'bg-red-500'"
+        :class="result.passed ? 'bg-green-600' : 'bg-red-600'"
       >
         <h1 class="text-3xl font-bold mb-4">
           {{ result.passed ? 'Congratulations!' : 'Exam Not Passed' }}
@@ -158,20 +166,28 @@ const downloadCertificate = async () => {
           >
             Retake Exam
           </UButton>
-          <UButton
-            v-if="result.passed"
-            @click="downloadCertificate"
-            :loading="isDownloading"
-            :disabled="isDownloading"
-            color="primary"
-            icon="i-heroicons-document-arrow-down"
-          >
-            {{
-              isDownloading
-                ? 'Generating Certificate...'
-                : 'Download Certificate'
-            }}
-          </UButton>
+          <div v-if="result.passed" class="flex space-x-4">
+            <UButton
+              @click="downloadCertificate"
+              :loading="isDownloading"
+              :disabled="isDownloading"
+              color="primary"
+              icon="i-heroicons-document-arrow-down"
+            >
+              {{
+                isDownloading
+                  ? 'Generating Certificate...'
+                  : 'Download Certificate'
+              }}
+            </UButton>
+            <UButton
+              @click="exitExam"
+              color="gray"
+              icon="i-heroicons-arrow-left-circle"
+            >
+              Exit Exam
+            </UButton>
+          </div>
         </div>
 
         <!-- Social Share Buttons (Only show when passed) -->
