@@ -57,6 +57,7 @@ model ExamQuestion {
   questionId    String
   userAnswer    String?
   answeredAt    DateTime?
+  order         Int
 
   @@unique([examSessionId, questionId])
 }
