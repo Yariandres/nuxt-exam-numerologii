@@ -25,12 +25,8 @@ export default defineEventHandler(async (event: H3Event) => {
         id: true,
         slug: true,
       },
-      // Get 30 random questions
+      // Limit to exactly 30 questions
       take: 30,
-      orderBy: {
-        // Random ordering in Postgres
-        createdAt: 'asc',
-      },
     });
 
     if (questions.length === 0) {
@@ -40,14 +36,18 @@ export default defineEventHandler(async (event: H3Event) => {
       });
     }
 
-    // Create new exam session with questions
+    // Randomize questions array
+    const randomizedQuestions = [...questions].sort(() => Math.random() - 0.5);
+
+    // Create new exam session with ordered questions
     const examSession = await prisma.examSession.create({
       data: {
         studentName: body.studentName,
-        totalQuestions: questions.length,
+        totalQuestions: randomizedQuestions.length,
         questions: {
-          create: questions.map((question) => ({
+          create: randomizedQuestions.map((question, index) => ({
             questionId: question.id,
+            order: index,
           })),
         },
       },
@@ -64,12 +64,18 @@ export default defineEventHandler(async (event: H3Event) => {
       },
     });
 
+    // Sort questions by order before returning
+    const sortedQuestions = examSession.questions.sort(
+      (a, b) => (a.order || 0) - (b.order || 0)
+    );
+
     return {
       id: examSession.id,
-      questionSlugs: examSession.questions.map((q) => q.question.slug),
+      questionSlugs: sortedQuestions.map((q) => q.question.slug),
       totalQuestions: examSession.totalQuestions,
+      currentQuestion: 0,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to initialize exam:', error);
     throw createError({
       statusCode: error.statusCode || 500,
