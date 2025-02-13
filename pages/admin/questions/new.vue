@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { supabase } = useSupabase();
 const router = useRouter();
 
 const isSubmitting = ref(false);

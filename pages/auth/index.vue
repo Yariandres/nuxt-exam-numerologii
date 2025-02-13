@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { supabase } = useSupabase();
+const supabase = useSupabaseClient();
+definePageMeta({
+  middleware: 'admin',
+});
 
 const email = ref('');
 const password = ref('');
@@ -52,6 +55,9 @@ const signUp = async () => {
       password: password.value,
       options: {
         emailRedirectTo: `${window.location.origin}/admin/dashboard`,
+        data: {
+          role: 'admin',
+        },
       },
     });
 

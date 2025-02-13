@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Question } from '@prisma/client';
-const { supabase } = useSupabase();
+const supabase = useSupabaseClient();
 
 const isLoading = ref(true);
 const questions = ref<Question[]>([]);
