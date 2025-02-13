@@ -50,7 +50,16 @@ const validateAndStart = async () => {
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto px-4 py-8">
+  <header>
+    <nav>
+      <div class="mx-8 my-4 flex justify-end">
+        <UButton @click="navigateTo('/auth')" color="emerald">
+          Admin Login
+        </UButton>
+      </div>
+    </nav>
+  </header>
+  <section class="max-w-3xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">
       Welcome to the Numerology Certification Exam
     </h1>
@@ -95,5 +104,5 @@ const validateAndStart = async () => {
         <span v-else>Begin Exam</span>
       </UButton>
     </div>
-  </div>
+  </section>
 </template>
