@@ -49,12 +49,22 @@ const deleteQuestion = async (questionId: string) => {
   if (!window.confirm('Are you sure you want to delete this question?')) return;
 
   try {
-    const { error: deleteError } = await supabase
+    // First delete all answers associated with the question
+    const { error: answersDeleteError } = await supabase
+      .from('Answer')
+      .delete()
+      .eq('questionId', questionId);
+
+    if (answersDeleteError) throw answersDeleteError;
+
+    // Then delete the question
+    const { error: questionDeleteError } = await supabase
       .from('Question')
       .delete()
       .eq('id', questionId);
 
-    if (deleteError) throw deleteError;
+    if (questionDeleteError) throw questionDeleteError;
+
     await fetchQuestions();
   } catch (err) {
     console.error('Error deleting question:', err);
@@ -102,12 +112,12 @@ onMounted(() => {
       </div>
 
       <!-- Questions List -->
-      <div v-else class="bg-white shadow rounded-lg">
+      <div v-else class="shadow rounded-lg ring-2 ring-gray-200">
         <ul class="divide-y divide-gray-200">
           <li
             v-for="question in questions"
             :key="question.id"
-            class="p-4 hover:bg-gray-50 flex items-center justify-between"
+            class="p-4 hover:bg-pink-900 flex items-center justify-between"
           >
             <div class="flex-1 min-w-0 pr-4">
               <div class="flex items-center gap-4">
@@ -132,7 +142,7 @@ onMounted(() => {
                   {{ question.difficulty }}
                 </span>
               </div>
-              <h3 class="text-sm font-medium text-gray-900 mt-2">
+              <h3 class="text-sm font-medium text-gray-50 mt-2">
                 {{ question.title }}
               </h3>
             </div>

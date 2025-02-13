@@ -230,7 +230,7 @@ const handleSubmit = async () => {
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
+            <label class="block text-sm font-medium text-gray-100 mb-1">
               Difficulty
             </label>
             <select
@@ -251,7 +251,7 @@ const handleSubmit = async () => {
 
         <!-- Answers -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label class="block text-sm font-medium text-gray-100 mb-2">
             Answers
           </label>
           <div class="space-y-3">
