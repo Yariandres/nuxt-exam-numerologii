@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { ref } from 'vue';
 
 export const useSupabase = () => {
   const supabaseUrl = useRuntimeConfig().public.supabaseUrl;
