@@ -1,5 +1,5 @@
 import { defineEventHandler, H3Event } from 'h3';
-import prisma from '~/server/utils/prisma';
+import prisma from '../../utils/prisma';
 
 interface SubmitAnswerRequest {
   examSessionId: string;

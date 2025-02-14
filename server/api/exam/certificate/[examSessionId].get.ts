@@ -1,5 +1,5 @@
 import { defineEventHandler, H3Event, setHeader } from 'h3';
-import prisma from '~/server/utils/prisma';
+import prisma from '../../../utils/prisma';
 import PDFDocument from 'pdfkit';
 
 export default defineEventHandler(async (event: H3Event) => {
