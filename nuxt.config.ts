@@ -10,11 +10,16 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
   ],
   supabase: {
-    redirectOptions: {
-      login: '/auth',
-      callback: '/confirm',
-      exclude: ['/'],
-    },
+    redirect: false,
+    // redirectOptions: {
+    //   login: '/auth',
+    //   callback: '/confirm',
+    //   exclude: [
+    //     '/', // Public: Home page
+    //     '/auth', // Public: Auth pages
+    //     '/students/**', // Public: All student routes
+    //   ],
+    // },
     cookieOptions: {
       name: 'sb-access-token',
       lifetime: 60 * 60 * 8, // 8 hours
@@ -23,12 +28,4 @@ export default defineNuxtConfig({
       sameSite: 'lax',
     },
   },
-  // runtimeConfig: {
-  //   // Private keys are only available on the server
-  //   // public keys are also exposed to the client
-  //   public: {
-  //     supabaseUrl: process.env.SUPABASE_URL,
-  //     supabaseKey: process.env.SUPABASE_KEY,
-  //   },
-  // },
 });
