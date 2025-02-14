@@ -37,8 +37,4 @@ export default defineNuxtConfig({
       inline: ['@prisma/client'],
     },
   },
-  alias: {
-    '.prisma/client/index-browser':
-      './node_modules/.prisma/client/index-browser.js',
-  },
 });
