@@ -9,6 +9,9 @@ export default defineNuxtConfig({
     '@prisma/nuxt',
     '@nuxtjs/supabase',
   ],
+  auth: {
+    baseURL: process.env.DEPLOY_URL || 'http://localhost:3000',
+  },
   supabase: {
     redirect: false,
     redirectOptions: {
