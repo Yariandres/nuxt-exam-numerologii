@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     preset: 'netlify',
   },
   app: {
-    baseURL: process.env.DEPLOY_URL || 'http://localhost:3000',
+    baseURL: '/',
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     },
