@@ -1,27 +1,23 @@
 <script setup lang="ts">
+const user = useSupabaseUser();
 const routes = [
-  { name: 'Dashboard', path: '/admin', icon: 'i-heroicons-home' },
-  {
-    name: 'Questions',
-    path: '/admin/questions',
-    icon: 'i-heroicons-question-mark-circle',
-  },
-  {
-    name: 'Settings',
-    path: '/admin/settings',
-    icon: 'i-heroicons-cog-6-tooth',
-  },
+  { name: 'Dashboard', path: '/admin/dashboard', icon: 'i-heroicons-home' },
 ];
+
+const logout = async () => {
+  await useSupabaseClient().auth.signOut();
+  navigateTo('/auth');
+};
 </script>
 
 <template>
-  <nav class="bg-white shadow-sm">
+  <nav class="shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <div class="flex">
           <!-- Logo -->
           <div class="flex-shrink-0 flex items-center">
-            <h1 class="text-xl font-bold text-gray-900">Admin Panel</h1>
+            <h1 class="text-xl font-bold text-gray-50">Admin Panel</h1>
           </div>
 
           <!-- Navigation Links -->
@@ -33,7 +29,7 @@ const routes = [
               class="inline-flex items-center px-1 pt-1 text-sm font-medium"
               :class="[
                 $route.path === route.path
-                  ? 'border-b-2 border-green-500 text-gray-900'
+                  ? 'border-b-2 border-green-500 text-gray-50'
                   : 'text-gray-500 hover:border-b-2 hover:border-gray-300 hover:text-gray-700',
               ]"
             >
@@ -46,8 +42,10 @@ const routes = [
         <!-- Right side -->
         <div class="flex items-center">
           <div class="flex-shrink-0">
-            <span class="text-sm text-gray-500 mr-4">{{ 'user.email' }}</span>
-            <UButton color="red" variant="soft" size="sm"> Logout </UButton>
+            <span class="text-sm text-gray-500 mr-4">{{ user?.email }}</span>
+            <UButton color="red" variant="soft" size="sm" @click="logout">
+              Logout
+            </UButton>
           </div>
         </div>
       </div>
