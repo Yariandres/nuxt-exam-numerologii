@@ -11,15 +11,11 @@ export default defineNuxtConfig({
   ],
   supabase: {
     redirect: false,
-    // redirectOptions: {
-    //   login: '/auth',
-    //   callback: '/confirm',
-    //   exclude: [
-    //     '/', // Public: Home page
-    //     '/auth', // Public: Auth pages
-    //     '/students/**', // Public: All student routes
-    //   ],
-    // },
+    redirectOptions: {
+      login: '/auth',
+      callback: '/confirm',
+      exclude: ['/', '/auth', '/students/**'],
+    },
     cookieOptions: {
       name: 'sb-access-token',
       lifetime: 60 * 60 * 8, // 8 hours
@@ -27,5 +23,11 @@ export default defineNuxtConfig({
       path: '/',
       sameSite: 'lax',
     },
+  },
+  nitro: {
+    preset: 'netlify',
+  },
+  generate: {
+    fallback: true,
   },
 });
