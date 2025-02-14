@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Question } from '@prisma/client';
+// import type { Question } from '@prisma/client';
 const supabase = useSupabaseClient();
 
 definePageMeta({
@@ -7,7 +7,7 @@ definePageMeta({
 });
 
 const isLoading = ref(true);
-const questions = ref<Question[]>([]);
+const questions = ref<any[]>([]);
 const error = ref('');
 
 // Fetch questions
