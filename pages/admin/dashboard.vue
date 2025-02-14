@@ -2,6 +2,10 @@
 import type { Question } from '@prisma/client';
 const supabase = useSupabaseClient();
 
+definePageMeta({
+  layout: 'admin',
+});
+
 const isLoading = ref(true);
 const questions = ref<Question[]>([]);
 const error = ref('');

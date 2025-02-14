@@ -1,8 +1,10 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient();
-definePageMeta({
-  middleware: 'admin',
-});
+const user = useSupabaseUser();
+
+if (user.value) {
+  navigateTo('/admin/dashboard');
+}
 
 const email = ref('');
 const password = ref('');
@@ -140,7 +142,7 @@ watch(activeTab, () => {
               v-model="email"
               type="email"
               required
-              class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="admin@example.com"
             />
           </div>
@@ -156,7 +158,7 @@ watch(activeTab, () => {
               v-model="password"
               type="password"
               required
-              class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-50 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
               placeholder="••••••••"
             />
           </div>

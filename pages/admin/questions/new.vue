@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const router = useRouter();
 
+definePageMeta({
+  layout: 'admin',
+});
+
 const isSubmitting = ref(false);
 const error = ref('');
 

@@ -3,6 +3,10 @@ const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
 
+definePageMeta({
+  layout: 'admin',
+});
+
 const questionId = route.params.id as string;
 
 const isLoading = ref(true);

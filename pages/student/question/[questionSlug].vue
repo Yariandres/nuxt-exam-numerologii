@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
+definePageMeta({
+  layout: 'student',
+});
+
 const route = useRoute();
 const router = useRouter();
 

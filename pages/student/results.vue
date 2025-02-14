@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: 'student',
+});
 interface FailedQuestion {
   title: string;
   userAnswer: string;
