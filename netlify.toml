@@ -1,13 +1,28 @@
+[build]
+publish = ".output/public"
+command = "pnpm run build"
+
+[build.environment]
+NODE_VERSION = "18"
+NITRO_PRESET = "netlify"
+
+# Handle SPA routing
 [[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
 
-[build]
-publish = "dist"
-command = "pnpm run build"
+# Handle assets
+[[headers]]
+for = "/_nuxt/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
 
-# Optional: Add headers for security
+[[headers]]
+for = "/assets/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
 [[headers]]
 for = "/*"
 [headers.values]
