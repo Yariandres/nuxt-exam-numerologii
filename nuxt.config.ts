@@ -27,7 +27,10 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'netlify',
   },
-  generate: {
-    fallback: true,
+  app: {
+    baseURL: process.env.DEPLOY_URL || 'http://localhost:3000',
+    head: {
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    },
   },
 });
