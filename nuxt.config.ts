@@ -25,20 +25,10 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: '/',
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
     },
-    cdnURL: process.env.NUXT_APP_CDN_URL || '',
-  },
-  ssr: true,
-  nitro: {
-    preset: 'netlify',
-  },
-  experimental: {
-    payloadExtraction: false,
-    renderJsonPayloads: true,
   },
 });
