@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import type { Question } from '@prisma/client';
 const supabase = useSupabaseClient();
 
 definePageMeta({
