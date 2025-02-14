@@ -33,8 +33,5 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'netlify',
-    externals: {
-      inline: ['@prisma/client'],
-    },
   },
 });
