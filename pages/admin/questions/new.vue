@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const router = useRouter();
+const supabase = useSupabaseClient();
 
 definePageMeta({
   layout: 'admin',
