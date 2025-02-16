@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/supabase',
     // '@prisma/nuxt',
+    // causes an error on netlify. Uncaught TypeError: Failed to resolve module specifier ".prisma/client/index-browser". Relative references must start with either "/", "./", or "../".
   ],
   supabase: {
     redirect: false,
