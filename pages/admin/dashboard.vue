@@ -52,21 +52,13 @@ const deleteQuestion = async (questionId: string) => {
   if (!window.confirm('Are you sure you want to delete this question?')) return;
 
   try {
-    // First delete all answers associated with the question
-    const { error: answersDeleteError } = await supabase
-      .from('Answer')
-      .delete()
-      .eq('questionId', questionId);
+    const response = await useFetch(`/api/questions/${questionId}`, {
+      method: 'DELETE',
+    });
 
-    if (answersDeleteError) throw answersDeleteError;
-
-    // Then delete the question
-    const { error: questionDeleteError } = await supabase
-      .from('Question')
-      .delete()
-      .eq('id', questionId);
-
-    if (questionDeleteError) throw questionDeleteError;
+    if (response.error.value) {
+      throw response.error.value;
+    }
 
     await fetchQuestions();
   } catch (err) {
