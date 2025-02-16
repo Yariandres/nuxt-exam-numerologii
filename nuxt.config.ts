@@ -31,20 +31,4 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1',
     },
   },
-  nitro: {
-    preset: 'netlify',
-    externals: {
-      inline: ['@prisma/client'],
-    },
-  },
-  vite: {
-    resolve: {
-      alias: {
-        '.prisma/client/index-browser': '@prisma/client/index-browser',
-      },
-    },
-    optimizeDeps: {
-      include: ['@prisma/client'],
-    },
-  },
 });
