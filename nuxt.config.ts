@@ -33,5 +33,18 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'netlify',
+    externals: {
+      inline: ['@prisma/client'],
+    },
+  },
+  vite: {
+    resolve: {
+      alias: {
+        '.prisma/client/index-browser': '@prisma/client/index-browser',
+      },
+    },
+    optimizeDeps: {
+      include: ['@prisma/client'],
+    },
   },
 });
