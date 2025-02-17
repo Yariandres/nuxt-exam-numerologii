@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { timerMinutes, isTimeUp, fetchTimerSettings, handleTimeUp } =
+  useExamTimer();
 definePageMeta({
   layout: 'student',
 });
@@ -27,7 +29,7 @@ const error = ref('');
 const isSubmitting = ref(false);
 
 // Check exam session on client side only
-onMounted(() => {
+onMounted(async () => {
   const examSessionId = localStorage.getItem('examSessionId');
   if (!examSessionId) {
     router.push('/');
@@ -36,6 +38,7 @@ onMounted(() => {
 
   // Fetch question data
   fetchQuestion();
+  await fetchTimerSettings();
 });
 
 const fetchQuestion = async () => {
@@ -97,6 +100,19 @@ const submitAnswer = async () => {
     isSubmitting.value = false;
   }
 };
+
+const handleExamSubmission = () => {
+  // Your exam submission logic here
+  navigateTo('/exam/summary');
+};
+
+// Handle time up
+watch(isTimeUp, (newValue) => {
+  if (newValue) {
+    // Auto submit exam
+    handleExamSubmission();
+  }
+});
 </script>
 
 <template>
@@ -128,6 +144,7 @@ const submitAnswer = async () => {
 
     <!-- Question Display -->
     <div v-else-if="currentQuestion" class="space-y-6">
+      <ExamTimer :minutes="timerMinutes" @time-up="handleTimeUp" />
       <!-- Question Header -->
       <div class="flex justify-between items-start">
         <h1 class="text-2xl font-bold flex-1">
