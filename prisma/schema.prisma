@@ -1,13 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-1.0.x"]
-  output        = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -17,18 +10,16 @@ datasource db {
 }
 
 model Question {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  answers     Answer[]
-  explanation String
-  category    String
-  difficulty  String
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relation to ExamSession through ExamQuestion
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  title         String
+  explanation   String
+  category      String
+  difficulty    String
+  active        Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  answers       Answer[]
   examQuestions ExamQuestion[]
 }
 
@@ -47,19 +38,25 @@ model ExamSession {
   completedAt    DateTime?
   score          Float?
   passed         Boolean?
-  questions      ExamQuestion[]
   totalQuestions Int
+  questions      ExamQuestion[]
 }
 
 model ExamQuestion {
   id            String      @id @default(cuid())
-  examSession   ExamSession @relation(fields: [examSessionId], references: [id])
   examSessionId String
-  question      Question    @relation(fields: [questionId], references: [id])
   questionId    String
   userAnswer    String?
   answeredAt    DateTime?
   order         Int
+  examSession   ExamSession @relation(fields: [examSessionId], references: [id])
+  question      Question    @relation(fields: [questionId], references: [id])
 
   @@unique([examSessionId, questionId])
+}
+
+model ExamSettings {
+  id           String   @id @default(cuid())
+  timerMinutes Int      @default(30)
+  updatedAt    DateTime @updatedAt
 }
