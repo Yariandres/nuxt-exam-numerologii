@@ -2,6 +2,11 @@
 const user = useSupabaseUser();
 const routes = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: 'i-heroicons-home' },
+  {
+    name: 'Settings',
+    path: '/admin/settings',
+    icon: 'i-heroicons-cog-6-tooth',
+  },
 ];
 
 const logout = async () => {
