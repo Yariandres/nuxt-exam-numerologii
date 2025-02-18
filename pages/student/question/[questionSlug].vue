@@ -1,6 +1,5 @@
 <script setup lang="ts">
-const { timerMinutes, isTimeUp, initializeTimer, clearTimer, handleTimeUp } =
-  useExamTimer();
+const { timerMinutes, isTimeUp, initializeTimer, clearTimer } = useExamTimer();
 definePageMeta({
   layout: 'student',
 });
@@ -36,11 +35,18 @@ onMounted(async () => {
     return;
   }
 
-  // Initialize or resume timer
-  await initializeTimer();
+  try {
+    // Initialize timer with the time-up handler
+    await initializeTimer(() => {
+      handleTimeUp();
+    });
 
-  // Then fetch question
-  await fetchQuestion();
+    // Then fetch question
+    await fetchQuestion();
+  } catch (error) {
+    console.error('Failed to initialize exam:', error);
+    error.value = 'Failed to start exam. Please try again.';
+  }
 });
 
 const fetchQuestion = async () => {
@@ -104,65 +110,74 @@ const submitAnswer = async () => {
   }
 };
 
-// Handle time up
-watch(isTimeUp, async (newValue) => {
-  if (newValue) {
-    try {
-      isSubmitting.value = true;
-      const examSessionId = localStorage.getItem('examSessionId');
+// Add this function to handle time up
+const handleTimeUp = async () => {
+  try {
+    isSubmitting.value = true;
+    const examSessionId = localStorage.getItem('examSessionId');
 
-      if (!examSessionId) {
-        console.error('No exam session ID found');
-        navigateTo('/');
-        return;
-      }
+    console.log('Time up - examSessionId:', examSessionId);
 
-      // Submit current answer if selected
-      if (selectedAnswer.value && currentQuestion.value) {
-        console.log('Submitting final answer...');
-        await $fetch('/api/exam/submit-answer', {
-          method: 'POST',
-          body: {
-            examSessionId,
-            questionId: currentQuestion.value.id,
-            answerId: selectedAnswer.value,
-          },
-        });
-      }
+    if (!examSessionId) {
+      console.error('No exam session ID found');
+      navigateTo('/');
+      return;
+    }
 
-      console.log('Completing exam due to time up...');
-      const response = await $fetch('/api/exam/complete', {
+    // Submit current answer if selected
+    if (selectedAnswer.value && currentQuestion.value) {
+      console.log('Submitting final answer...');
+      await $fetch('/api/exam/submit-answer', {
+        method: 'POST',
+        body: {
+          examSessionId,
+          questionId: currentQuestion.value.id,
+          answerId: selectedAnswer.value,
+        },
+      });
+    }
+
+    console.log('Completing exam due to time up...');
+    const response = await $fetch<{ success: boolean; message: string }>(
+      '/api/exam/complete',
+      {
         method: 'POST',
         body: {
           examSessionId,
           timeExpired: true,
         },
-      });
-
-      console.log('Exam completion response:', response);
-
-      if (response.success) {
-        // Clear timer and redirect
-        clearTimer();
-        navigateTo('/student/results');
-      } else {
-        throw new Error('Failed to complete exam');
       }
-    } catch (err) {
-      console.error('Failed to handle time up:', err);
-      error.value =
-        err?.message || 'Failed to submit exam. Please contact support.';
+    );
 
-      // Show error to user
-      const errorMessage = err?.message || 'Failed to submit exam';
-      alert(
-        `Error: ${errorMessage}. Please take a screenshot and contact support.`
-      );
-    } finally {
-      isSubmitting.value = false;
+    console.log('Exam completion response:', response);
+
+    if (response.success) {
+      // Clear timer and redirect
+      clearTimer();
+      await navigateTo('/student/results');
+    } else {
+      throw new Error(response.message || 'Failed to complete exam');
     }
+  } catch (err: any) {
+    console.error('Failed to handle time up:', {
+      error: err,
+      message: err.message,
+      data: err.data,
+    });
+
+    error.value =
+      err?.data?.message ||
+      err?.message ||
+      'Failed to submit exam. Please contact support.';
+
+    // Show error to user
+    alert(
+      `Error: ${error.value}. Please take a screenshot and contact support.`
+    );
+  } finally {
+    isSubmitting.value = false;
   }
-});
+};
 </script>
 
 <template>
