@@ -8,10 +8,8 @@ definePageMeta({
 });
 
 const validateAndStart = async () => {
-  // Reset error state
   nameError.value = '';
 
-  // Basic validation
   if (!studentName.value.trim()) {
     nameError.value = 'Please enter your name';
     return;
@@ -24,7 +22,6 @@ const validateAndStart = async () => {
 
   isLoading.value = true;
   try {
-    // Initialize exam session
     const response = await $fetch('/api/exam/initialize', {
       method: 'POST',
       body: {
@@ -35,6 +32,10 @@ const validateAndStart = async () => {
     // Store exam session data
     localStorage.setItem('examSessionId', response.id);
     localStorage.setItem('studentName', studentName.value.trim());
+    localStorage.setItem(
+      'questionSlugs',
+      JSON.stringify(response.questionSlugs)
+    );
 
     // Navigate to first question
     if (response.questionSlugs.length > 0) {
@@ -43,7 +44,6 @@ const validateAndStart = async () => {
       throw new Error('No questions available');
     }
   } catch (error) {
-    console.error('Failed to start exam:', error);
     nameError.value = 'Failed to start exam. Please try again.';
   } finally {
     isLoading.value = false;
