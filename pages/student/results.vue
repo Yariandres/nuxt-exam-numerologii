@@ -18,18 +18,18 @@ interface ExamResult {
   timeExpired: boolean;
 }
 
-const result = ref<ExamResult | null>(null);
+const examResult = ref<ExamResult | null>(null);
 const isLoading = ref(true);
 const error = ref('');
 const isDownloading = ref(false);
 
 // Share URLs configuration
 const shareUrls = computed(() => {
-  if (!result.value?.passed) return null;
+  if (!examResult.value?.passed) return null;
 
   const shareText = encodeURIComponent(
     `I just passed my Numerology Certification Exam with a score of ${Math.round(
-      result.value.score * 100
+      examResult.value.score * 100
     )}%! 🎉`
   );
   const shareUrl = encodeURIComponent(window.location.origin);
@@ -49,8 +49,6 @@ const shareToSocial = (platform: string) => {
   window.open(url, '_blank', 'width=600,height=400');
 };
 
-const examResult = ref<ExamResult | null>(null);
-
 onMounted(async () => {
   const examSessionId = localStorage.getItem('examSessionId');
   if (!examSessionId) {
@@ -59,13 +57,15 @@ onMounted(async () => {
   }
 
   try {
-    const result = await $fetch<ExamResult>(
+    const response = await $fetch<ExamResult>(
       `/api/exam/results/${examSessionId}`
     );
-    examResult.value = result;
+    examResult.value = response;
   } catch (err) {
     console.error('Failed to fetch results:', err);
     error.value = 'Failed to load exam results';
+  } finally {
+    isLoading.value = false;
   }
 });
 
