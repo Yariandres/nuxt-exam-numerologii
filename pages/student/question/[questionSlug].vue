@@ -21,34 +21,61 @@ interface Question {
   difficulty: string;
 }
 
+// State management
 const currentQuestion = ref<Question | null>(null);
 const selectedAnswer = ref<string>('');
 const isLoading = ref(true);
 const error = ref('');
 const isSubmitting = ref(false);
+const questionSlugs = ref<string[]>([]);
+const currentQuestionIndex = ref(0);
 
-// Check exam session on client side only
+// Computed properties
+const progress = computed(() => {
+  if (!questionSlugs.value.length) return 0;
+  return `${currentQuestionIndex.value + 1} / ${questionSlugs.value.length}`;
+});
+
+// State management functions
+const resetExamState = () => {
+  currentQuestion.value = null;
+  selectedAnswer.value = '';
+  currentQuestionIndex.value = 0;
+  questionSlugs.value = [];
+};
+
+// Lifecycle hooks
 onMounted(async () => {
+  resetExamState();
+
   const examSessionId = localStorage.getItem('examSessionId');
-  if (!examSessionId) {
+  const storedSlugs = localStorage.getItem('questionSlugs');
+
+  if (!examSessionId || !storedSlugs) {
+    localStorage.clear();
     navigateTo('/');
     return;
   }
 
   try {
-    // Initialize timer with the time-up handler
-    await initializeTimer(() => {
-      handleTimeUp();
-    });
+    questionSlugs.value = JSON.parse(storedSlugs);
+    currentQuestionIndex.value = questionSlugs.value.findIndex(
+      (slug) => slug === route.params.questionSlug
+    );
 
-    // Then fetch question
+    if (currentQuestionIndex.value === -1) {
+      navigateTo('/');
+      return;
+    }
+
+    await initializeTimer(() => handleTimeUp());
     await fetchQuestion();
   } catch (error) {
-    console.error('Failed to initialize exam:', error);
     error.value = 'Failed to start exam. Please try again.';
   }
 });
 
+// API calls
 const fetchQuestion = async () => {
   try {
     isLoading.value = true;
@@ -57,13 +84,13 @@ const fetchQuestion = async () => {
     );
     currentQuestion.value = question;
   } catch (err) {
-    console.error('Failed to fetch question:', err);
     error.value = 'Failed to load question. Please try again.';
   } finally {
     isLoading.value = false;
   }
 };
 
+// Event handlers
 const handleAnswerSelect = (answerId: string) => {
   selectedAnswer.value = answerId;
 };
@@ -74,15 +101,14 @@ const submitAnswer = async () => {
 
   try {
     isSubmitting.value = true;
-
     const examSessionId = localStorage.getItem('examSessionId');
+
     if (!examSessionId) {
-      router.push('/');
+      navigateTo('/');
       return;
     }
 
-    // Submit answer to the server
-    const response = await $fetch('/api/exam/submit-answer', {
+    await $fetch('/api/exam/submit-answer', {
       method: 'POST',
       body: {
         examSessionId,
@@ -91,46 +117,40 @@ const submitAnswer = async () => {
       },
     });
 
-    // If this was the last question, clear timer
-    if (response.examCompleted) {
+    selectedAnswer.value = '';
+
+    const isLastQuestion =
+      currentQuestionIndex.value === questionSlugs.value.length - 1;
+    if (isLastQuestion) {
       clearTimer();
-      router.push('/student/results');
+      localStorage.removeItem('questionSlugs');
+      await navigateTo('/student/results');
       return;
     }
 
-    // Otherwise, go to the next question
-    if (response.nextQuestionSlug) {
-      router.push(`/student/question/${response.nextQuestionSlug}`);
+    const nextSlug = questionSlugs.value[currentQuestionIndex.value + 1];
+    if (nextSlug) {
+      await router.push(`/student/question/${nextSlug}`);
+    } else {
+      await navigateTo('/student/results');
     }
   } catch (err) {
-    console.error('Failed to submit answer:', err);
     error.value = 'Failed to submit answer. Please try again.';
   } finally {
     isSubmitting.value = false;
   }
 };
 
-// Watch for timer completion
-watch(isTimeUp, async (newValue) => {
-  if (newValue) {
-    console.log('Timer completed, handling exam submission...');
-    await handleTimeUp();
-  }
-});
-
-// Handle time up function
 const handleTimeUp = async () => {
   try {
     isSubmitting.value = true;
     const examSessionId = localStorage.getItem('examSessionId');
 
     if (!examSessionId) {
-      console.error('No exam session ID found');
       navigateTo('/');
       return;
     }
 
-    // Submit current answer if selected
     if (selectedAnswer.value && currentQuestion.value) {
       await $fetch('/api/exam/submit-answer', {
         method: 'POST',
@@ -142,7 +162,6 @@ const handleTimeUp = async () => {
       });
     }
 
-    // Complete the exam
     const response = await $fetch('/api/exam/complete', {
       method: 'POST',
       body: {
@@ -153,19 +172,30 @@ const handleTimeUp = async () => {
 
     if (response.success) {
       clearTimer();
+      localStorage.removeItem('questionSlugs');
       await navigateTo('/student/results');
     }
   } catch (err) {
-    console.error('Failed to handle time up:', err);
     error.value = 'Failed to submit exam. Please contact support.';
   } finally {
     isSubmitting.value = false;
   }
 };
+
+// Watchers
+watch(
+  () => route.params.questionSlug,
+  () => {
+    selectedAnswer.value = '';
+  }
+);
 </script>
 
 <template>
   <div class="max-w-3xl mx-auto px-4 py-8">
+    <!-- Progress Indicator -->
+    <div class="mb-4 text-right text-gray-600">Question {{ progress }}</div>
+
     <!-- Timer Component -->
     <ExamTimer :minutes="timerMinutes" @time-up="handleTimeUp" class="mb-6" />
 
@@ -243,7 +273,11 @@ const handleTimeUp = async () => {
           color="primary"
           icon="i-heroicons-arrow-right"
         >
-          Submit Answer
+          {{
+            currentQuestionIndex === questionSlugs.length - 1
+              ? 'Finish Exam'
+              : 'Next Question'
+          }}
         </UButton>
       </div>
     </div>

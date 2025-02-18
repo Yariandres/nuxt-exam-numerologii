@@ -25,8 +25,9 @@ export default defineEventHandler(async (event: H3Event) => {
         id: true,
         slug: true,
       },
-      // Limit to exactly 30 questions
-      take: 30,
+      orderBy: {
+        id: 'asc', // Ensure consistent initial ordering
+      },
     });
 
     if (questions.length === 0) {
@@ -36,19 +37,42 @@ export default defineEventHandler(async (event: H3Event) => {
       });
     }
 
-    // Randomize questions array
-    const randomizedQuestions = [...questions].sort(() => Math.random() - 0.5);
+    console.log('Before randomization - Total questions:', questions.length);
+    console.log(
+      'Question IDs:',
+      questions.map((q) => q.id)
+    );
 
-    // Create new exam session with ordered questions
+    // Create a copy and randomize
+    const randomizedQuestions = [...questions]
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+
+    console.log(
+      'After randomization - Total questions:',
+      randomizedQuestions.length
+    );
+    console.log(
+      'Randomized Question IDs:',
+      randomizedQuestions.map((q) => q.id)
+    );
+
+    // Create the exam questions array first
+    const examQuestions = randomizedQuestions.map((question, index) => ({
+      questionId: question.id,
+      order: index,
+    }));
+
+    console.log('Exam questions to create:', examQuestions.length);
+
+    // Create new exam session
     const examSession = await prisma.examSession.create({
       data: {
         studentName: body.studentName,
-        totalQuestions: randomizedQuestions.length,
+        totalQuestions: questions.length,
         questions: {
-          create: randomizedQuestions.map((question, index) => ({
-            questionId: question.id,
-            order: index,
-          })),
+          create: examQuestions,
         },
       },
       include: {
@@ -60,18 +84,25 @@ export default defineEventHandler(async (event: H3Event) => {
               },
             },
           },
+          orderBy: {
+            order: 'asc',
+          },
         },
       },
     });
 
-    // Sort questions by order before returning
-    const sortedQuestions = examSession.questions.sort(
-      (a, b) => (a.order || 0) - (b.order || 0)
+    console.log(
+      'Created exam session questions:',
+      examSession.questions.length
+    );
+    console.log(
+      'Question slugs:',
+      examSession.questions.map((q) => q.question.slug)
     );
 
     return {
       id: examSession.id,
-      questionSlugs: sortedQuestions.map((q) => q.question.slug),
+      questionSlugs: examSession.questions.map((q) => q.question.slug),
       totalQuestions: examSession.totalQuestions,
       currentQuestion: 0,
     };
