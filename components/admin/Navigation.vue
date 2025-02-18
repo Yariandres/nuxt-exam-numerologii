@@ -7,6 +7,11 @@ const routes = [
     path: '/admin/settings',
     icon: 'i-heroicons-cog-6-tooth',
   },
+  {
+    name: 'Students and Exams',
+    path: '/',
+    icon: 'i-heroicons-user-group',
+  },
 ];
 
 const logout = async () => {
