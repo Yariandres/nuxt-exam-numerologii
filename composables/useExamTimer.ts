@@ -32,7 +32,7 @@ export const useExamTimer = () => {
   // Start the timer
   const startTimer = (onTimeUp: () => void) => {
     if (timer.value) {
-      clearInterval(timer.value);
+      clearInterval(timer.value as NodeJS.Timeout);
       timer.value = null;
     }
 
@@ -42,7 +42,7 @@ export const useExamTimer = () => {
         timerMinutes.value = Math.ceil(totalSeconds.value / 60);
       } else {
         if (timer.value) {
-          clearInterval(timer.value);
+          clearInterval(timer.value as NodeJS.Timeout);
           timer.value = null;
         }
         isTimeUp.value = true;
@@ -97,7 +97,7 @@ export const useExamTimer = () => {
   // Clear timer data
   const clearTimer = () => {
     if (timer.value) {
-      clearInterval(timer.value);
+      clearInterval(timer.value as NodeJS.Timeout);
       timer.value = null;
     }
     localStorage.removeItem('examEndTime');
