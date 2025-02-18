@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { timerMinutes, isTimeUp, fetchTimerSettings, handleTimeUp } =
+const { timerMinutes, isTimeUp, initializeTimer, clearTimer, handleTimeUp } =
   useExamTimer();
 definePageMeta({
   layout: 'student',
@@ -36,8 +36,8 @@ onMounted(async () => {
     return;
   }
 
-  // Fetch timer settings first
-  await fetchTimerSettings();
+  // Initialize or resume timer
+  await initializeTimer();
 
   // Then fetch question
   await fetchQuestion();
@@ -85,8 +85,9 @@ const submitAnswer = async () => {
       },
     });
 
-    // If this was the last question, redirect to results
+    // If this was the last question, clear timer
     if (response.examCompleted) {
+      clearTimer();
       router.push('/student/results');
       return;
     }
@@ -111,12 +112,14 @@ watch(isTimeUp, async (newValue) => {
       const examSessionId = localStorage.getItem('examSessionId');
 
       if (!examSessionId) {
+        console.error('No exam session ID found');
         navigateTo('/');
         return;
       }
 
       // Submit current answer if selected
       if (selectedAnswer.value && currentQuestion.value) {
+        console.log('Submitting final answer...');
         await $fetch('/api/exam/submit-answer', {
           method: 'POST',
           body: {
@@ -127,8 +130,8 @@ watch(isTimeUp, async (newValue) => {
         });
       }
 
-      // Force exam completion due to time up
-      await $fetch('/api/exam/complete', {
+      console.log('Completing exam due to time up...');
+      const response = await $fetch('/api/exam/complete', {
         method: 'POST',
         body: {
           examSessionId,
@@ -136,11 +139,27 @@ watch(isTimeUp, async (newValue) => {
         },
       });
 
-      // Redirect to results page
-      navigateTo('/student/results');
+      console.log('Exam completion response:', response);
+
+      if (response.success) {
+        // Clear timer and redirect
+        clearTimer();
+        navigateTo('/student/results');
+      } else {
+        throw new Error('Failed to complete exam');
+      }
     } catch (err) {
       console.error('Failed to handle time up:', err);
-      error.value = 'Failed to submit exam. Please contact support.';
+      error.value =
+        err?.message || 'Failed to submit exam. Please contact support.';
+
+      // Show error to user
+      const errorMessage = err?.message || 'Failed to submit exam';
+      alert(
+        `Error: ${errorMessage}. Please take a screenshot and contact support.`
+      );
+    } finally {
+      isSubmitting.value = false;
     }
   }
 });
