@@ -9,6 +9,15 @@ const emit = defineEmits<{
 
 // Convert minutes to seconds for countdown
 const totalSeconds = ref(props.minutes * 60);
+
+// Update totalSeconds when minutes prop changes
+watch(
+  () => props.minutes,
+  (newMinutes) => {
+    totalSeconds.value = newMinutes * 60;
+  }
+);
+
 const formattedTime = computed(() => {
   const minutes = Math.floor(totalSeconds.value / 60);
   const seconds = totalSeconds.value % 60;
@@ -23,6 +32,10 @@ const isCriticalTime = computed(() => totalSeconds.value < 60); // Less than 1 m
 const timer = setInterval(() => {
   if (totalSeconds.value > 0) {
     totalSeconds.value--;
+    // Store current time in localStorage
+    const endTime = new Date();
+    endTime.setSeconds(endTime.getSeconds() + totalSeconds.value);
+    localStorage.setItem('examEndTime', endTime.toISOString());
   } else {
     clearInterval(timer);
     emit('timeUp');

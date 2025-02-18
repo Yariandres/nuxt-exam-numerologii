@@ -15,6 +15,7 @@ interface ExamResult {
   score: number;
   passed: boolean;
   failedQuestions: FailedQuestion[];
+  timeExpired: boolean;
 }
 
 const result = ref<ExamResult | null>(null);
@@ -48,23 +49,23 @@ const shareToSocial = (platform: string) => {
   window.open(url, '_blank', 'width=600,height=400');
 };
 
+const examResult = ref<ExamResult | null>(null);
+
 onMounted(async () => {
   const examSessionId = localStorage.getItem('examSessionId');
   if (!examSessionId) {
-    await navigateTo('/');
+    navigateTo('/');
     return;
   }
 
   try {
-    const examResult = await $fetch<ExamResult>(
+    const result = await $fetch<ExamResult>(
       `/api/exam/results/${examSessionId}`
     );
-    result.value = examResult;
+    examResult.value = result;
   } catch (err) {
     console.error('Failed to fetch results:', err);
-    error.value = 'Failed to load exam results. Please try again.';
-  } finally {
-    isLoading.value = false;
+    error.value = 'Failed to load exam results';
   }
 });
 
@@ -133,22 +134,22 @@ const exitExam = async () => {
     </div>
 
     <!-- Results Display -->
-    <div v-else-if="result" class="space-y-8">
+    <div v-else-if="examResult" class="space-y-8">
       <!-- Result Header -->
       <div
         class="p-6 rounded-lg"
-        :class="result.passed ? 'bg-green-600' : 'bg-red-600'"
+        :class="examResult.passed ? 'bg-green-600' : 'bg-red-600'"
       >
         <h1 class="text-3xl font-bold mb-4">
-          {{ result.passed ? 'Congratulations!' : 'Exam Not Passed' }}
+          {{ examResult.passed ? 'Congratulations!' : 'Exam Not Passed' }}
         </h1>
         <div class="text-lg">
           <p class="mb-2">
-            Score: {{ Math.round(result.score * 100) }}% ({{
-              result.correctAnswers
-            }}/{{ result.totalQuestions }})
+            Score: {{ Math.round(examResult.score * 100) }}% ({{
+              examResult.correctAnswers
+            }}/{{ examResult.totalQuestions }})
           </p>
-          <p v-if="result.passed">
+          <p v-if="examResult.passed">
             You have successfully passed the Numerology Certification Exam!
           </p>
           <p v-else>
@@ -158,18 +159,22 @@ const exitExam = async () => {
         </div>
       </div>
 
+      <div v-if="examResult?.timeExpired" class="text-red-600 mb-4">
+        Note: Exam was automatically submitted due to time expiration.
+      </div>
+
       <!-- Action Buttons and Share Options -->
       <div class="flex flex-col space-y-4">
         <div class="flex justify-between">
           <UButton
-            v-if="!result.passed"
+            v-if="!examResult.passed"
             @click="retakeExam"
             color="primary"
             icon="i-heroicons-arrow-path"
           >
             Retake Exam
           </UButton>
-          <div v-if="result.passed" class="flex space-x-4">
+          <div v-if="examResult.passed" class="flex space-x-4">
             <UButton
               @click="downloadCertificate"
               :loading="isDownloading"
@@ -194,7 +199,7 @@ const exitExam = async () => {
         </div>
 
         <!-- Social Share Buttons (Only show when passed) -->
-        <div v-if="result.passed" class="flex flex-col space-y-2">
+        <div v-if="examResult.passed" class="flex flex-col space-y-2">
           <p class="text-center text-gray-600 font-medium">
             Share your achievement!
           </p>
@@ -255,11 +260,11 @@ const exitExam = async () => {
       </div>
 
       <!-- Failed Questions Review -->
-      <div v-if="result.failedQuestions.length > 0" class="mt-8">
+      <div v-if="examResult.failedQuestions.length > 0" class="mt-8">
         <h2 class="text-xl font-semibold mb-4">Questions to Review</h2>
         <div class="space-y-6">
           <div
-            v-for="(question, index) in result.failedQuestions"
+            v-for="(question, index) in examResult.failedQuestions"
             :key="index"
             class="bg-white p-6 rounded-lg border"
           >

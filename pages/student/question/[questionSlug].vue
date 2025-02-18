@@ -32,13 +32,15 @@ const isSubmitting = ref(false);
 onMounted(async () => {
   const examSessionId = localStorage.getItem('examSessionId');
   if (!examSessionId) {
-    router.push('/');
+    navigateTo('/');
     return;
   }
 
-  // Fetch question data
-  fetchQuestion();
+  // Fetch timer settings first
   await fetchTimerSettings();
+
+  // Then fetch question
+  await fetchQuestion();
 });
 
 const fetchQuestion = async () => {
@@ -101,22 +103,54 @@ const submitAnswer = async () => {
   }
 };
 
-const handleExamSubmission = () => {
-  // Your exam submission logic here
-  navigateTo('/exam/summary');
-};
-
 // Handle time up
-watch(isTimeUp, (newValue) => {
+watch(isTimeUp, async (newValue) => {
   if (newValue) {
-    // Auto submit exam
-    handleExamSubmission();
+    try {
+      isSubmitting.value = true;
+      const examSessionId = localStorage.getItem('examSessionId');
+
+      if (!examSessionId) {
+        navigateTo('/');
+        return;
+      }
+
+      // Submit current answer if selected
+      if (selectedAnswer.value && currentQuestion.value) {
+        await $fetch('/api/exam/submit-answer', {
+          method: 'POST',
+          body: {
+            examSessionId,
+            questionId: currentQuestion.value.id,
+            answerId: selectedAnswer.value,
+          },
+        });
+      }
+
+      // Force exam completion due to time up
+      await $fetch('/api/exam/complete', {
+        method: 'POST',
+        body: {
+          examSessionId,
+          timeExpired: true,
+        },
+      });
+
+      // Redirect to results page
+      navigateTo('/student/results');
+    } catch (err) {
+      console.error('Failed to handle time up:', err);
+      error.value = 'Failed to submit exam. Please contact support.';
+    }
   }
 });
 </script>
 
 <template>
   <div class="max-w-3xl mx-auto px-4 py-8">
+    <!-- Timer Component -->
+    <ExamTimer :minutes="timerMinutes" @time-up="handleTimeUp" class="mb-6" />
+
     <!-- Loading State -->
     <div
       v-if="isLoading"
@@ -144,7 +178,6 @@ watch(isTimeUp, (newValue) => {
 
     <!-- Question Display -->
     <div v-else-if="currentQuestion" class="space-y-6">
-      <ExamTimer :minutes="timerMinutes" @time-up="handleTimeUp" />
       <!-- Question Header -->
       <div class="flex justify-between items-start">
         <h1 class="text-2xl font-bold flex-1">
