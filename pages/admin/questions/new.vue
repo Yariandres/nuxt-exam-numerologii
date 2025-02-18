@@ -168,7 +168,7 @@ const handleSubmit = async () => {
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Add New Question</h1>
+        <h1 class="text-2xl font-bold text-gray-100">Add New Question</h1>
         <UButton
           to="/admin/dashboard"
           color="gray"
@@ -197,10 +197,9 @@ const handleSubmit = async () => {
           <label class="block text-sm font-medium text-gray-100 mb-1">
             Question Title
           </label>
-          <input
+          <UInput
             v-model="question.title"
             type="text"
-            class="w-full rounded-lg border-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 ring-2 ring-gray-200 px-3 py-2"
             :class="{ 'border-red-300': formErrors.title }"
           />
           <p v-if="formErrors.title" class="mt-1 text-sm text-red-600">

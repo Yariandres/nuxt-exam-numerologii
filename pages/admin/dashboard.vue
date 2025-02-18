@@ -137,7 +137,7 @@ onMounted(() => {
                   {{ question.difficulty }}
                 </span>
               </div>
-              <h3 class="text-sm font-medium text-gray-50 mt-2">
+              <h3 class="text-sm font-medium text-gray-500 mt-2">
                 {{ question.title }}
               </h3>
             </div>
