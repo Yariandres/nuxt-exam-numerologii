@@ -1,9 +1,16 @@
-import { defineEventHandler, H3Event } from 'h3';
+import { defineEventHandler, H3Event, getRouterParam, createError } from 'h3';
 import prisma from '../../../utils/prisma';
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
-    const slug = getRouterParam(event, 'slug');
+    const slug = decodeURIComponent(getRouterParam(event, 'slug') || '');
+
+    if (!slug) {
+      throw createError({
+        statusCode: 400,
+        message: 'Question slug is required',
+      });
+    }
 
     const question = await prisma.question.findUnique({
       where: { slug },
