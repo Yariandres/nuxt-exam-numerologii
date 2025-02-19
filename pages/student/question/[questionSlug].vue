@@ -250,10 +250,6 @@ watch(
       <div class="mb-4 text-right text-gray-400 text-lg font-medium">
         Question {{ progress }}
       </div>
-
-      <!-- Timer Component -->
-      <ExamTimer :minutes="timerMinutes" @time-up="handleTimeUp" class="mb-6" />
-
       <!-- Loading State -->
       <div
         v-if="isLoading"
@@ -280,7 +276,13 @@ watch(
       </div>
 
       <!-- Question Display -->
-      <div v-else-if="currentQuestion" class="space-y-8">
+      <div v-else-if="currentQuestion" class="space-y-8 relative">
+        <!-- Timer Component -->
+        <ExamTimer
+          :minutes="timerMinutes"
+          @time-up="handleTimeUp"
+          class="mb-6"
+        />
         <!-- Question Header -->
         <div class="space-y-4">
           <span

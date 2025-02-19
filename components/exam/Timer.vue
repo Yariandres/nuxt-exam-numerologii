@@ -4,13 +4,13 @@ const { formattedTime, isLowTime, isCriticalTime } = useExamTimer();
 
 <template>
   <div
-    class="fixed top-4 right-4 p-4 rounded-lg shadow-md transition-all duration-300"
+    class="fixed top-12 p-4 rounded-lg shadow-md transition-all duration-300"
     :class="[
       isCriticalTime
         ? 'bg-red-100 animate-pulse'
         : isLowTime
         ? 'bg-yellow-100'
-        : 'bg-white',
+        : 'bg-gray-100',
     ]"
   >
     <p
