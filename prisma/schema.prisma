@@ -13,7 +13,7 @@ model Question {
   id            String         @id @default(cuid())
   slug          String         @unique
   title         String
-  explanation   String
+  explanation   String?
   category      String
   difficulty    String
   active        Boolean        @default(true)

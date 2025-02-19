@@ -34,11 +34,19 @@ const formErrors = ref({
 
 // Available options
 const categories = [
-  'Numerology Basics',
-  'Life Path Numbers',
-  'Destiny Numbers',
-  'Soul Numbers',
-  'Personal Years',
+  'Wstęp do numerologii ',
+  'Dzień urodzenia',
+  'Kryształ życia',
+  'Wibracje główne ',
+  'Podwibracje',
+  'Liczby magiczne',
+  'Liczby Mistrzowskie',
+  'Liczby wibracyjne',
+  'Wyznaczniki karmiczne',
+  'Horoskop',
+  'Biznes',
+  'Podpis',
+  'Numrologia Dziecięca',
 ];
 const difficulties = ['Easy', 'Medium', 'Hard'];
 
