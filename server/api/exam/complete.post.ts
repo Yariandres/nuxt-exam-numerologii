@@ -54,7 +54,6 @@ export default defineEventHandler(async (event) => {
       },
       data: {
         completedAt: new Date(),
-        timeExpired: timeExpired || false,
       },
     });
 
@@ -66,7 +65,9 @@ export default defineEventHandler(async (event) => {
 
     return {
       success: true,
-      message: 'Exam completed successfully',
+      message: timeExpired
+        ? 'Exam completed due to time expiration'
+        : 'Exam completed successfully',
     };
   } catch (error: any) {
     console.error('Failed to complete exam:', {
