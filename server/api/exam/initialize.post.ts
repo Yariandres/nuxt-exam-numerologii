@@ -26,14 +26,15 @@ export default defineEventHandler(async (event: H3Event) => {
         slug: true,
       },
       orderBy: {
-        id: 'asc', // Ensure consistent initial ordering
+        id: 'asc',
       },
     });
 
-    if (questions.length === 0) {
+    if (questions.length < 30) {
       throw createError({
         statusCode: 500,
-        message: 'No questions available',
+        message:
+          'Insufficient questions available for exam (minimum 30 required)',
       });
     }
 
@@ -43,11 +44,12 @@ export default defineEventHandler(async (event: H3Event) => {
       questions.map((q) => q.id)
     );
 
-    // Create a copy and randomize
+    // Create a copy, randomize, and take only 30 questions
     const randomizedQuestions = [...questions]
       .map((value) => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
+      .map(({ value }) => value)
+      .slice(0, 30);
 
     console.log(
       'After randomization - Total questions:',
@@ -70,7 +72,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const examSession = await prisma.examSession.create({
       data: {
         studentName: body.studentName,
-        totalQuestions: questions.length,
+        totalQuestions: 30,
         questions: {
           create: examQuestions,
         },
