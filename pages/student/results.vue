@@ -266,7 +266,7 @@ const exitExam = async () => {
           <div
             v-for="(question, index) in examResult.failedQuestions"
             :key="index"
-            class="bg-white p-6 rounded-lg border"
+            class="p-6 rounded-lg border"
           >
             <h3 class="font-medium mb-2">{{ question.title }}</h3>
             <div class="space-y-2 text-sm">
@@ -274,7 +274,10 @@ const exitExam = async () => {
               <p class="text-green-600">
                 Correct answer: {{ question.correctAnswer }}
               </p>
-              <p class="mt-4 text-gray-600 bg-gray-50 p-3 rounded">
+              <p
+                v-if="question.explanation"
+                class="mt-4 text-gray-600 bg-gray-50 p-3 rounded"
+              >
                 {{ question.explanation }}
               </p>
             </div>
