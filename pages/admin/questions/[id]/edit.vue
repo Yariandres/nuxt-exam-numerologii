@@ -44,11 +44,19 @@ const generateCuid = () => {
 
 // Available options (same as new question form)
 const categories = [
-  'Numerology Basics',
-  'Life Path Numbers',
-  'Destiny Numbers',
-  'Soul Numbers',
-  'Personal Years',
+  'Wstęp do numerologii ',
+  'Dzień urodzenia',
+  'Kryształ życia',
+  'Wibracje główne ',
+  'Podwibracje',
+  'Liczby magiczne',
+  'Liczby Mistrzowskie',
+  'Liczby wibracyjne',
+  'Wyznaczniki karmiczne',
+  'Horoskop',
+  'Biznes',
+  'Podpis',
+  'Numrologia Dziecięca',
 ];
 const difficulties = ['Easy', 'Medium', 'Hard'];
 
@@ -209,7 +217,7 @@ onMounted(() => {
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Edit Question</h1>
+        <h1 class="text-2xl font-bold text-gray-300">Edit Question</h1>
         <UButton
           to="/admin/dashboard"
           color="gray"
@@ -241,55 +249,41 @@ onMounted(() => {
       >
         <!-- Question Title -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label class="block text-sm font-medium text-gray-300 mb-1">
             Question Title
           </label>
-          <input
-            v-model="question.title"
-            type="text"
-            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ring-2 ring-gray-200 px-3 py-2"
-          />
+          <UInput v-model="question.title" type="text" size="xl" />
         </div>
 
         <!-- Category & Difficulty -->
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
+            <label class="block text-sm font-medium text-gray-300 mb-1">
               Category
             </label>
-            <select
+            <USelectMenu
               v-model="question.category"
-              class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ring-2 ring-gray-200 px-3 py-2"
-            >
-              <option
-                v-for="category in categories"
-                :key="category"
-                :value="category"
-              >
-                {{ category }}
-              </option>
-            </select>
+              :options="categories"
+              size="xl"
+            />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
+            <label class="block text-sm font-medium text-gray-300 mb-1">
               Difficulty
             </label>
-            <select
+            <USelectMenu
               v-model="question.difficulty"
-              class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ring-2 ring-gray-200 px-3 py-2"
-            >
-              <option v-for="level in difficulties" :key="level" :value="level">
-                {{ level }}
-              </option>
-            </select>
+              :options="difficulties"
+              size="xl"
+            />
           </div>
         </div>
 
         <!-- Answers -->
         <div>
           <div class="flex justify-between items-center mb-2">
-            <label class="block text-sm font-medium text-gray-700">
+            <label class="block text-sm font-medium text-gray-300">
               Answers
             </label>
             <UButton
@@ -308,12 +302,14 @@ onMounted(() => {
               :key="answer.id || index"
               class="flex items-center gap-3"
             >
-              <input
+              <UInput
                 v-model="answer.text"
                 type="text"
                 :placeholder="`Answer ${index + 1}`"
-                class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                class="w-full"
+                size="xl"
               />
+
               <UCheckbox
                 v-model="answer.isCorrect"
                 label="Correct"
@@ -346,7 +342,7 @@ onMounted(() => {
         </div>
 
         <!-- Explanation -->
-        <div>
+        <div v-if="question.explanation">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             Explanation
           </label>
