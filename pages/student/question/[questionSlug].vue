@@ -247,7 +247,7 @@ watch(
     <!-- Main Content with backdrop blur -->
     <div class="relative z-10 max-w-3xl mx-auto px-4 py-12">
       <!-- Progress Indicator -->
-      <div class="mb-4 text-right text-gray-400 text-lg font-medium">
+      <div class="mb-4 text-right text-pink-200 text-lg font-medium">
         Pytanie {{ progress }}
       </div>
       <!-- Loading State -->
