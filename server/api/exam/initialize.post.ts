@@ -3,16 +3,17 @@ import prisma from '../../utils/prisma';
 
 interface InitializeExamRequest {
   studentName: string;
+  studentEmail: string;
 }
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
     const body = await readBody<InitializeExamRequest>(event);
 
-    if (!body.studentName) {
+    if (!body.studentName || !body.studentEmail) {
       throw createError({
         statusCode: 400,
-        message: 'Student name is required',
+        message: 'Student name and email are required',
       });
     }
 
@@ -72,6 +73,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const examSession = await prisma.examSession.create({
       data: {
         studentName: body.studentName,
+        userEmail: body.studentEmail,
         totalQuestions: 30,
         questions: {
           create: examQuestions,

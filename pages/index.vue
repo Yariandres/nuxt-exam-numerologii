@@ -1,7 +1,9 @@
 <script setup lang="ts">
 const isLoading = ref(false);
 const studentName = ref('');
+const studentEmail = ref('');
 const nameError = ref('');
+const emailError = ref('');
 
 definePageMeta({
   layout: 'student',
@@ -9,7 +11,9 @@ definePageMeta({
 
 const validateAndStart = async () => {
   nameError.value = '';
+  emailError.value = '';
 
+  // Validate name
   if (!studentName.value.trim()) {
     nameError.value = 'Proszę wpisać swoje imię';
     return;
@@ -20,17 +24,31 @@ const validateAndStart = async () => {
     return;
   }
 
+  // Validate email
+  if (!studentEmail.value.trim()) {
+    emailError.value = 'Proszę wpisać adres email';
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(studentEmail.value.trim())) {
+    emailError.value = 'Proszę wpisać prawidłowy adres email';
+    return;
+  }
+
   isLoading.value = true;
   try {
     const response = await $fetch('/api/exam/initialize', {
       method: 'POST',
       body: {
         studentName: studentName.value.trim(),
+        studentEmail: studentEmail.value.trim(),
       },
     });
 
     localStorage.setItem('examSessionId', response.id);
     localStorage.setItem('studentName', studentName.value.trim());
+    localStorage.setItem('studentEmail', studentEmail.value.trim());
     localStorage.setItem(
       'questionSlugs',
       JSON.stringify(response.questionSlugs)
@@ -140,25 +158,56 @@ const validateAndStart = async () => {
           </ul>
 
           <div class="mb-8">
-            <label
-              for="studentName"
-              class="block text-lg font-medium text-green-300 mb-3"
-            >
-              Wpisz swoje pełne imię i nazwisko (tak jak ma się pojawić na
-              certyfikacie)
-            </label>
-            <input
-              id="studentName"
-              v-model="studentName"
-              type="text"
-              class="w-full px-5 py-4 text-lg border rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 transitionAll duration-200"
-              :class="{ 'border-red-500 ring-red-500': nameError }"
-              placeholder="np. Jan Kowalski"
-              @keyup.enter="validateAndStart"
-            />
-            <p v-if="nameError" class="mt-2 text-base text-red-400 font-medium">
-              {{ nameError }}
-            </p>
+            <!-- Name Input -->
+            <div class="mb-6">
+              <label
+                for="studentName"
+                class="block text-lg font-medium text-green-300 mb-3"
+              >
+                Wpisz swoje pełne imię i nazwisko (tak jak ma się pojawić na
+                certyfikacie)
+              </label>
+              <input
+                id="studentName"
+                v-model="studentName"
+                type="text"
+                class="w-full px-5 py-4 text-lg border rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 transitionAll duration-200"
+                :class="{ 'border-red-500 ring-red-500': nameError }"
+                placeholder="np. Jan Kowalski"
+                @keyup.enter="validateAndStart"
+              />
+              <p
+                v-if="nameError"
+                class="mt-2 text-base text-red-400 font-medium"
+              >
+                {{ nameError }}
+              </p>
+            </div>
+
+            <!-- Email Input -->
+            <div class="mb-6">
+              <label
+                for="studentEmail"
+                class="block text-lg font-medium text-green-300 mb-3"
+              >
+                Podaj swój adres email (potrzebny do wysłania certyfikatu)
+              </label>
+              <input
+                id="studentEmail"
+                v-model="studentEmail"
+                type="email"
+                class="w-full px-5 py-4 text-lg border rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 transitionAll duration-200"
+                :class="{ 'border-red-500 ring-red-500': emailError }"
+                placeholder="twoj@email.com"
+                @keyup.enter="validateAndStart"
+              />
+              <p
+                v-if="emailError"
+                class="mt-2 text-base text-red-400 font-medium"
+              >
+                {{ emailError }}
+              </p>
+            </div>
           </div>
 
           <UButton
