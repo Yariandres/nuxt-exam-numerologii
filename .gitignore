@@ -26,3 +26,4 @@ logs
 # Local Netlify folder
 .netlify
 .prisma/seed.js
+TODO.md
