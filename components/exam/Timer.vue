@@ -23,13 +23,13 @@ const { formattedTime, isLowTime, isCriticalTime } = useExamTimer();
           : 'text-gray-600',
       ]"
     >
-      Time Remaining: {{ formattedTime }}
+      Pozostały czas: {{ formattedTime }}
     </p>
     <p v-if="isLowTime && !isCriticalTime" class="text-sm text-yellow-600 mt-1">
-      Less than 5 minutes remaining!
+      Zostało mniej niż 5 minut!
     </p>
     <p v-if="isCriticalTime" class="text-sm text-red-600 mt-1 font-bold">
-      Less than 1 minute remaining!
+      Została mniej niż 1 minuta!
     </p>
   </div>
 </template>

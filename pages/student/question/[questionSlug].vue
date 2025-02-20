@@ -248,7 +248,7 @@ watch(
     <div class="relative z-10 max-w-3xl mx-auto px-4 py-12">
       <!-- Progress Indicator -->
       <div class="mb-4 text-right text-gray-400 text-lg font-medium">
-        Question {{ progress }}
+        Pytanie {{ progress }}
       </div>
       <!-- Loading State -->
       <div
@@ -339,8 +339,8 @@ watch(
           >
             {{
               currentQuestionIndex === questionSlugs.length - 1
-                ? 'Finish Exam'
-                : 'Next Question'
+                ? 'Zakończ egzamin'
+                : 'Następne pytanie'
             }}
           </UButton>
         </div>
