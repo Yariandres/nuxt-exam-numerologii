@@ -11,12 +11,12 @@ const validateAndStart = async () => {
   nameError.value = '';
 
   if (!studentName.value.trim()) {
-    nameError.value = 'Please enter your name';
+    nameError.value = 'Proszę wpisać swoje imię';
     return;
   }
 
   if (studentName.value.length < 3) {
-    nameError.value = 'Name must be at least 3 characters long';
+    nameError.value = 'Imię musi mieć co najmniej 3 znaki';
     return;
   }
 
@@ -42,7 +42,7 @@ const validateAndStart = async () => {
       throw new Error('No questions available');
     }
   } catch (error) {
-    nameError.value = 'Failed to start exam. Please try again.';
+    nameError.value = 'Nie udało się rozpocząć egzaminu. Spróbuj ponownie.';
   } finally {
     isLoading.value = false;
   }
@@ -112,29 +112,30 @@ const validateAndStart = async () => {
         <h1
           class="text-4xl md:text-5xl font-bold mb-8 text-gray-100 leading-tight tracking-tight"
         >
-          Welcome to the Numerology Certification Exam
+          Witaj w Egzaminie Certyfikacyjnym z Numerologii
         </h1>
 
         <div class="rounded-xl bg-gray-800 shadow-2xl p-8 mb-8">
           <h2 class="text-2xl font-semibold mb-8 text-gray-100 tracking-wide">
-            Exam Instructions
+            Instrukcje egzaminu
           </h2>
 
           <ul class="list-disc pl-6 space-y-4 mb-8">
             <li class="text-lg text-gray-300 leading-relaxed">
-              This exam consists of multiple-choice questions
+              Egzamin składa się z pytań wielokrotnego wyboru
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
-              You must achieve a minimum score of 70% to pass
+              Musisz uzyskać minimum 70% punktów, aby zdać
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
-              You will move to the next question after answering the current one
+              Po udzieleniu odpowiedzi przejdziesz do następnego pytania
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
-              Your results will be available immediately after submission
+              Wyniki będą dostępne natychmiast po zakończeniu
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
-              If you don't pass, you can retake the exam immediately
+              Jeśli nie zdasz, możesz natychmiast przystąpić do ponownego
+              egzaminu
             </li>
           </ul>
 
@@ -143,7 +144,8 @@ const validateAndStart = async () => {
               for="studentName"
               class="block text-lg font-medium text-green-300 mb-3"
             >
-              Enter your full name (as it will appear on the certificate)
+              Wpisz swoje pełne imię i nazwisko (tak jak ma się pojawić na
+              certyfikacie)
             </label>
             <input
               id="studentName"
@@ -151,7 +153,7 @@ const validateAndStart = async () => {
               type="text"
               class="w-full px-5 py-4 text-lg border rounded-lg bg-gray-700 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder-gray-400 transitionAll duration-200"
               :class="{ 'border-red-500 ring-red-500': nameError }"
-              placeholder="e.g., John Smith"
+              placeholder="np. Jan Kowalski"
               @keyup.enter="validateAndStart"
             />
             <p v-if="nameError" class="mt-2 text-base text-red-400 font-medium">
@@ -168,8 +170,8 @@ const validateAndStart = async () => {
             :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
             icon="i-heroicons-arrow-right"
           >
-            <span v-if="isLoading">Loading...</span>
-            <span v-else>Begin Exam</span>
+            <span v-if="isLoading">Ładowanie...</span>
+            <span v-else>Rozpocznij egzamin</span>
           </UButton>
         </div>
       </section>

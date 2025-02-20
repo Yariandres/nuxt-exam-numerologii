@@ -28,7 +28,7 @@ const shareUrls = computed(() => {
   if (!examResult.value?.passed) return null;
 
   const shareText = encodeURIComponent(
-    `I just passed my Numerology Certification Exam with a score of ${Math.round(
+    `Właśnie zdałem/am Egzamin Certyfikacyjny z Numerologii z wynikiem ${Math.round(
       examResult.value.score * 100
     )}%! 🎉`
   );
@@ -129,7 +129,7 @@ const exitExam = async () => {
     >
       {{ error }}
       <UButton size="sm" color="red" variant="ghost" @click="retakeExam">
-        Start New Exam
+        Rozpocznij nowy egzamin
       </UButton>
     </div>
 
@@ -141,26 +141,26 @@ const exitExam = async () => {
         :class="examResult.passed ? 'bg-green-600' : 'bg-red-600'"
       >
         <h1 class="text-3xl font-bold mb-4">
-          {{ examResult.passed ? 'Congratulations!' : 'Exam Not Passed' }}
+          {{ examResult.passed ? 'Gratulacje!' : 'Egzamin niezaliczony' }}
         </h1>
         <div class="text-lg">
           <p class="mb-2">
-            Score: {{ Math.round(examResult.score * 100) }}% ({{
+            Wynik: {{ Math.round(examResult.score * 100) }}% ({{
               examResult.correctAnswers
             }}/{{ examResult.totalQuestions }})
           </p>
           <p v-if="examResult.passed">
-            You have successfully passed the Numerology Certification Exam!
+            Pomyślnie zdałeś/aś Egzamin Certyfikacyjny z Numerologii!
           </p>
           <p v-else>
-            Unfortunately, you did not achieve the passing score. You can retake
-            the exam immediately.
+            Niestety, nie osiągnąłeś/aś wymaganego wyniku. Możesz natychmiast
+            przystąpić do ponownego egzaminu.
           </p>
         </div>
       </div>
 
       <div v-if="examResult?.timeExpired" class="text-red-600 mb-4">
-        Note: Exam was automatically submitted due to time expiration.
+        Uwaga: Egzamin został automatycznie zakończony z powodu upływu czasu.
       </div>
 
       <!-- Action Buttons and Share Options -->
@@ -172,7 +172,7 @@ const exitExam = async () => {
             color="primary"
             icon="i-heroicons-arrow-path"
           >
-            Retake Exam
+            Powtórz egzamin
           </UButton>
           <div v-if="examResult.passed" class="flex space-x-4">
             <UButton
@@ -184,8 +184,8 @@ const exitExam = async () => {
             >
               {{
                 isDownloading
-                  ? 'Generating Certificate...'
-                  : 'Download Certificate'
+                  ? 'Generowanie certyfikatu...'
+                  : 'Pobierz certyfikat'
               }}
             </UButton>
             <UButton
@@ -193,15 +193,15 @@ const exitExam = async () => {
               color="gray"
               icon="i-heroicons-arrow-left-circle"
             >
-              Exit Exam
+              Zakończ egzamin
             </UButton>
           </div>
         </div>
 
-        <!-- Social Share Buttons (Only show when passed) -->
+        <!-- Social Share Buttons -->
         <div v-if="examResult.passed" class="flex flex-col space-y-2">
           <p class="text-center text-gray-600 font-medium">
-            Share your achievement!
+            Podziel się swoim osiągnięciem!
           </p>
           <div class="flex justify-center space-x-4">
             <!-- Twitter -->
@@ -261,7 +261,7 @@ const exitExam = async () => {
 
       <!-- Failed Questions Review -->
       <div v-if="examResult.failedQuestions.length > 0" class="mt-8">
-        <h2 class="text-xl font-semibold mb-4">Questions to Review</h2>
+        <h2 class="text-xl font-semibold mb-4">Pytania do przeanalizowania</h2>
         <div class="space-y-6">
           <div
             v-for="(question, index) in examResult.failedQuestions"
@@ -270,9 +270,11 @@ const exitExam = async () => {
           >
             <h3 class="font-medium mb-2">{{ question.title }}</h3>
             <div class="space-y-2 text-sm">
-              <p class="text-red-600">Your answer: {{ question.userAnswer }}</p>
+              <p class="text-red-600">
+                Twoja odpowiedź: {{ question.userAnswer }}
+              </p>
               <p class="text-green-600">
-                Correct answer: {{ question.correctAnswer }}
+                Prawidłowa odpowiedź: {{ question.correctAnswer }}
               </p>
               <p
                 v-if="question.explanation"
