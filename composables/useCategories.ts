@@ -13,6 +13,8 @@ export const useCategories = () => {
     'Biznes',
     'Podpis',
     'Numerologia Dziecięca',
+    'Potencjał',
+    'Kombinacja',
   ];
 
   return {
