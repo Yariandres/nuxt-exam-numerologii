@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useCategories } from '@/composables/useCategories';
+
 const supabase = useSupabaseClient();
 const route = useRoute();
 const router = useRouter();
@@ -43,21 +45,7 @@ const generateCuid = () => {
 };
 
 // Available options (same as new question form)
-const categories = [
-  'Wstęp do numerologii ',
-  'Dzień urodzenia',
-  'Kryształ życia',
-  'Wibracje główne ',
-  'Podwibracje',
-  'Liczby magiczne',
-  'Liczby Mistrzowskie',
-  'Liczby wibracyjne',
-  'Wyznaczniki karmiczne',
-  'Horoskop',
-  'Biznes',
-  'Podpis',
-  'Numrologia Dziecięca',
-];
+const { categories } = useCategories();
 const difficulties = ['Easy', 'Medium', 'Hard'];
 
 // Track deleted answer IDs
