@@ -71,11 +71,6 @@ const validateForm = () => {
     isValid = false;
   }
 
-  if (!question.value.explanation.trim()) {
-    formErrors.value.explanation = 'Explanation is required';
-    isValid = false;
-  }
-
   // Validate answers
   const filledAnswers = question.value.answers.filter((a) => a.text.trim());
   const correctAnswers = question.value.answers.filter((a) => a.isCorrect);
@@ -287,10 +282,10 @@ const handleSubmit = async () => {
           </p>
         </div>
 
-        <!-- Explanation -->
+        <!-- Explanation (now marked as optional) -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Explanation
+            Explanation (Optional)
           </label>
           <textarea
             v-model="question.explanation"
