@@ -30,6 +30,39 @@ const isSubmitting = ref(false);
 const questionSlugs = ref<string[]>([]);
 const currentQuestionIndex = ref(0);
 
+// Add this type and ref for background elements
+const backgroundElements = ref<{
+  largeNumbers: {
+    fontSize: string;
+    left: string;
+    top: string;
+    animationDelay: string;
+    animationDuration: string;
+    number: number;
+  }[];
+  smallNumbers: {
+    fontSize: string;
+    left: string;
+    top: string;
+    animationDelay: string;
+    animationDuration: string;
+    number: number;
+  }[];
+  stars: {
+    width: string;
+    height: string;
+    left: string;
+    top: string;
+    animationDelay: string;
+    animationDuration: string;
+    opacity: number;
+  }[];
+}>({
+  largeNumbers: [],
+  smallNumbers: [],
+  stars: [],
+});
+
 // Computed properties
 const progress = computed(() => {
   if (!questionSlugs.value.length) return 0;
@@ -70,6 +103,35 @@ onMounted(async () => {
 
     await initializeTimer(() => handleTimeUp());
     await fetchQuestion();
+
+    // Initialize background elements
+    backgroundElements.value = {
+      largeNumbers: Array.from({ length: 10 }, () => ({
+        fontSize: `${Math.random() * 80 + 40}px`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 5}s`,
+        animationDuration: `${Math.random() * 10 + 10}s`,
+        number: Math.floor(Math.random() * 9) + 1,
+      })),
+      smallNumbers: Array.from({ length: 20 }, () => ({
+        fontSize: `${Math.random() * 16 + 8}px`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 3}s`,
+        animationDuration: `${Math.random() * 4 + 2}s`,
+        number: Math.floor(Math.random() * 9) + 1,
+      })),
+      stars: Array.from({ length: 30 }, () => ({
+        width: `${Math.random() * 2 + 1}px`,
+        height: `${Math.random() * 2 + 1}px`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 5}s`,
+        animationDuration: `${Math.random() * 3 + 2}s`,
+        opacity: Math.random() * 0.3 + 0.1,
+      })),
+    };
   } catch (error) {
     error.value = 'Failed to start exam. Please try again.';
   }
@@ -195,53 +257,55 @@ watch(
   <div class="min-h-screen bg-gray-900 relative overflow-hidden">
     <!-- Animated Background -->
     <div class="absolute inset-0 overflow-hidden">
-      <!-- Large Numbers (fewer than index page) -->
-      <div
-        v-for="n in 10"
-        :key="`large-${n}`"
-        class="absolute text-gray-800/5 font-bold animate-float"
-        :style="{
-          fontSize: `${Math.random() * 80 + 40}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${Math.random() * 10 + 10}s`,
-        }"
-      >
-        {{ Math.floor(Math.random() * 9) + 1 }}
-      </div>
+      <ClientOnly>
+        <!-- Large Numbers -->
+        <div
+          v-for="(item, index) in backgroundElements.largeNumbers"
+          :key="`large-${index}`"
+          class="absolute text-gray-800/5 font-bold animate-float"
+          :style="{
+            fontSize: item.fontSize,
+            left: item.left,
+            top: item.top,
+            animationDelay: item.animationDelay,
+            animationDuration: item.animationDuration,
+          }"
+        >
+          {{ item.number }}
+        </div>
 
-      <!-- Small Numbers (fewer and more transparent) -->
-      <div
-        v-for="n in 20"
-        :key="`small-${n}`"
-        class="absolute text-gray-800/3 animate-pulse"
-        :style="{
-          fontSize: `${Math.random() * 16 + 8}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 3}s`,
-          animationDuration: `${Math.random() * 4 + 2}s`,
-        }"
-      >
-        {{ Math.floor(Math.random() * 9) + 1 }}
-      </div>
+        <!-- Small Numbers -->
+        <div
+          v-for="(item, index) in backgroundElements.smallNumbers"
+          :key="`small-${index}`"
+          class="absolute text-gray-800/3 animate-pulse"
+          :style="{
+            fontSize: item.fontSize,
+            left: item.left,
+            top: item.top,
+            animationDelay: item.animationDelay,
+            animationDuration: item.animationDuration,
+          }"
+        >
+          {{ item.number }}
+        </div>
 
-      <!-- Stars (subtle) -->
-      <div
-        v-for="n in 30"
-        :key="`star-${n}`"
-        class="absolute bg-white rounded-full animate-twinkle"
-        :style="{
-          width: `${Math.random() * 2 + 1}px`,
-          height: `${Math.random() * 2 + 1}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${Math.random() * 3 + 2}s`,
-          opacity: Math.random() * 0.3 + 0.1,
-        }"
-      />
+        <!-- Stars -->
+        <div
+          v-for="(item, index) in backgroundElements.stars"
+          :key="`star-${index}`"
+          class="absolute bg-white rounded-full animate-twinkle"
+          :style="{
+            width: item.width,
+            height: item.height,
+            left: item.left,
+            top: item.top,
+            animationDelay: item.animationDelay,
+            animationDuration: item.animationDuration,
+            opacity: item.opacity,
+          }"
+        />
+      </ClientOnly>
     </div>
 
     <!-- Main Content with backdrop blur -->

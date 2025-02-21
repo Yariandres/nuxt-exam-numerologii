@@ -4,6 +4,37 @@ const studentName = ref('');
 const studentEmail = ref('');
 const nameError = ref('');
 const emailError = ref('');
+const backgroundElements = ref<{
+  largeNumbers: {
+    fontSize: string;
+    left: string;
+    top: string;
+    animationDelay: string;
+    animationDuration: string;
+    number: number;
+  }[];
+  smallNumbers: {
+    fontSize: string;
+    left: string;
+    top: string;
+    animationDelay: string;
+    animationDuration: string;
+    number: number;
+  }[];
+  stars: {
+    width: string;
+    height: string;
+    left: string;
+    top: string;
+    animationDelay: string;
+    animationDuration: string;
+    opacity: number;
+  }[];
+}>({
+  largeNumbers: [],
+  smallNumbers: [],
+  stars: [],
+});
 
 definePageMeta({
   layout: 'student',
@@ -65,59 +96,93 @@ const validateAndStart = async () => {
     isLoading.value = false;
   }
 };
+
+// Create the background elements data on mount to avoid hydration mismatch
+onMounted(() => {
+  // Large numbers
+  backgroundElements.value = {
+    largeNumbers: Array.from({ length: 20 }, () => ({
+      fontSize: `${Math.random() * 100 + 50}px`,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 5}s`,
+      animationDuration: `${Math.random() * 10 + 10}s`,
+      number: Math.floor(Math.random() * 9) + 1,
+    })),
+    smallNumbers: Array.from({ length: 40 }, () => ({
+      fontSize: `${Math.random() * 20 + 10}px`,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 3}s`,
+      animationDuration: `${Math.random() * 4 + 2}s`,
+      number: Math.floor(Math.random() * 9) + 1,
+    })),
+    stars: Array.from({ length: 50 }, () => ({
+      width: `${Math.random() * 3 + 1}px`,
+      height: `${Math.random() * 3 + 1}px`,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 5}s`,
+      animationDuration: `${Math.random() * 3 + 2}s`,
+      opacity: Math.random() * 0.5 + 0.1,
+    })),
+  };
+});
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-900 relative overflow-hidden">
     <!-- Animated Background -->
     <div class="absolute inset-0 overflow-hidden">
-      <!-- Large Numbers -->
-      <div
-        v-for="n in 20"
-        :key="`large-${n}`"
-        class="absolute text-gray-700/10 font-bold animate-float"
-        :style="{
-          fontSize: `${Math.random() * 100 + 50}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${Math.random() * 10 + 10}s`,
-        }"
-      >
-        {{ Math.floor(Math.random() * 9) + 1 }}
-      </div>
+      <ClientOnly>
+        <!-- Large Numbers -->
+        <div
+          v-for="(item, index) in backgroundElements.largeNumbers"
+          :key="`large-${index}`"
+          class="absolute text-gray-700/10 font-bold animate-float"
+          :style="{
+            fontSize: item.fontSize,
+            left: item.left,
+            top: item.top,
+            animationDelay: item.animationDelay,
+            animationDuration: item.animationDuration,
+          }"
+        >
+          {{ item.number }}
+        </div>
 
-      <!-- Small Numbers -->
-      <div
-        v-for="n in 40"
-        :key="`small-${n}`"
-        class="absolute text-gray-700/5 animate-pulse"
-        :style="{
-          fontSize: `${Math.random() * 20 + 10}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 3}s`,
-          animationDuration: `${Math.random() * 4 + 2}s`,
-        }"
-      >
-        {{ Math.floor(Math.random() * 9) + 1 }}
-      </div>
+        <!-- Small Numbers -->
+        <div
+          v-for="(item, index) in backgroundElements.smallNumbers"
+          :key="`small-${index}`"
+          class="absolute text-gray-700/5 animate-pulse"
+          :style="{
+            fontSize: item.fontSize,
+            left: item.left,
+            top: item.top,
+            animationDelay: item.animationDelay,
+            animationDuration: item.animationDuration,
+          }"
+        >
+          {{ item.number }}
+        </div>
 
-      <!-- Stars -->
-      <div
-        v-for="n in 50"
-        :key="`star-${n}`"
-        class="absolute bg-white rounded-full animate-twinkle"
-        :style="{
-          width: `${Math.random() * 3 + 1}px`,
-          height: `${Math.random() * 3 + 1}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${Math.random() * 3 + 2}s`,
-          opacity: Math.random() * 0.5 + 0.1,
-        }"
-      />
+        <!-- Stars -->
+        <div
+          v-for="(item, index) in backgroundElements.stars"
+          :key="`star-${index}`"
+          class="absolute bg-white rounded-full animate-twinkle"
+          :style="{
+            width: item.width,
+            height: item.height,
+            left: item.left,
+            top: item.top,
+            animationDelay: item.animationDelay,
+            animationDuration: item.animationDuration,
+            opacity: item.opacity,
+          }"
+        />
+      </ClientOnly>
     </div>
 
     <!-- Existing Content -->
@@ -128,9 +193,9 @@ const validateAndStart = async () => {
 
       <section class="max-w-3xl mx-auto px-4 py-12">
         <h1
-          class="text-4xl md:text-5xl font-bold mb-8 text-gray-100 leading-tight tracking-tight"
+          class="text-4xl md:text-5xl font-bold mb-8 text-gray-100 leading-tight tracking-tight font-[playfair]"
         >
-          Witaj w Egzaminie Certyfikacyjnym z Numerologii
+          Witaj w Egzaminie Certyfikacyjnym z Szkoły Numerologii
         </h1>
 
         <div class="rounded-xl bg-gray-800 shadow-2xl p-8 mb-8">
@@ -149,7 +214,10 @@ const validateAndStart = async () => {
               Po udzieleniu odpowiedzi przejdziesz do następnego pytania
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
-              Wyniki będą dostępne natychmiast po zakończeniu
+              Wyniki będą dostępne natychmiast po zakończeniu testu
+            </li>
+            <li class="text-lg text-gray-300 leading-relaxed">
+              Masz 40 minut na rozwiązanie testu
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
               Jeśli nie zdasz, możesz natychmiast przystąpić do ponownego
