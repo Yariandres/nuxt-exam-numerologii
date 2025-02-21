@@ -12,7 +12,7 @@ export const useCategories = () => {
     'Horoskop',
     'Biznes',
     'Podpis',
-    'Numrologia Dziecięca',
+    'Numerologia Dziecięca',
   ];
 
   return {
