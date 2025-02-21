@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient();
+const { categories } = useCategories();
 
 definePageMeta({
   layout: 'admin',
@@ -14,7 +15,45 @@ const currentPage = ref(1);
 const pageSize = ref(20); // Number of questions per page
 const totalQuestions = ref(0);
 
-// Modified fetch questions with pagination
+// Add new ref for search
+const searchQuery = ref('');
+
+// Add new ref for category filter
+const selectedCategory = ref('');
+
+// Get unique categories from questions
+const availableCategories = computed(() => {
+  return categories.sort();
+});
+
+// Modified filtered questions computation
+const filteredQuestions = computed(() => {
+  let filtered = questions.value;
+
+  // Apply title search
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter((question) =>
+      question.title.toLowerCase().includes(query)
+    );
+  }
+
+  // Apply category filter
+  if (selectedCategory.value) {
+    filtered = filtered.filter(
+      (question) => question.category === selectedCategory.value
+    );
+  }
+
+  return filtered;
+});
+
+// Update totalPages to use filtered questions length
+const totalPages = computed(() =>
+  Math.ceil(filteredQuestions.value.length / pageSize.value)
+);
+
+// Modified fetch questions
 const fetchQuestions = async () => {
   try {
     isLoading.value = true;
@@ -26,15 +65,11 @@ const fetchQuestions = async () => {
 
     totalQuestions.value = count || 0;
 
-    // Fetch paginated questions
+    // Fetch all questions for client-side filtering
     const { data, error: fetchError } = await supabase
       .from('Question')
       .select('*')
-      .order('createdAt', { ascending: false })
-      .range(
-        (currentPage.value - 1) * pageSize.value,
-        currentPage.value * pageSize.value - 1
-      );
+      .order('createdAt', { ascending: false });
 
     if (fetchError) throw fetchError;
     questions.value = data;
@@ -46,15 +81,23 @@ const fetchQuestions = async () => {
   }
 };
 
-// Add pagination controls
-const totalPages = computed(() =>
-  Math.ceil(totalQuestions.value / pageSize.value)
-);
+// Update pagination to use filtered questions
+const paginatedQuestions = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredQuestions.value.slice(start, end);
+});
 
-const changePage = async (page: number) => {
+// Modified changePage function
+const changePage = (page: number) => {
   currentPage.value = page;
-  await fetchQuestions();
+  // No need to fetch questions again as we're filtering client-side
 };
+
+// Reset pagination when filters change
+watch([searchQuery, selectedCategory], () => {
+  currentPage.value = 1;
+});
 
 // Toggle question status
 const toggleQuestionStatus = async (
@@ -121,6 +164,63 @@ onMounted(() => {
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <!-- Search and Filter Section -->
+      <div class="mb-6 space-y-4 sm:space-y-0 sm:flex sm:gap-4">
+        <!-- Title Search -->
+        <UInput
+          v-model="searchQuery"
+          placeholder="Search questions by title..."
+          icon="i-heroicons-magnifying-glass"
+          size="lg"
+          class="w-full sm:w-2/3"
+        />
+
+        <!-- Category Filter -->
+        <USelect
+          v-model="selectedCategory"
+          :options="availableCategories"
+          placeholder="Filter by category"
+          size="lg"
+          class="w-full sm:w-1/3"
+          clearable
+        >
+          <template #option="{ option }">
+            <span class="truncate">{{ option }}</span>
+          </template>
+        </USelect>
+      </div>
+
+      <!-- Active Filters Display -->
+      <div
+        v-if="selectedCategory || searchQuery"
+        class="mb-4 flex flex-wrap gap-2"
+      >
+        <UBadge v-if="searchQuery" color="gray" class="flex items-center gap-1">
+          Search: {{ searchQuery }}
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark"
+            size="xs"
+            @click="searchQuery = ''"
+          />
+        </UBadge>
+        <UBadge
+          v-if="selectedCategory"
+          color="gray"
+          class="flex items-center gap-1"
+        >
+          Category: {{ selectedCategory }}
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark"
+            size="xs"
+            @click="selectedCategory = ''"
+          />
+        </UBadge>
+      </div>
+
       <!-- Loading State -->
       <div v-if="isLoading" class="flex justify-center py-12">
         <UIcon name="i-heroicons-arrow-path" class="animate-spin h-8 w-8" />
@@ -136,10 +236,32 @@ onMounted(() => {
 
       <!-- Questions List -->
       <div v-else>
-        <div class="shadow rounded-lg ring-2 ring-gray-200">
+        <!-- No Results Message -->
+        <div
+          v-if="filteredQuestions.length === 0"
+          class="text-center py-12 text-gray-500"
+        >
+          No questions found matching your criteria.
+          <UButton
+            v-if="searchQuery || selectedCategory"
+            color="gray"
+            variant="ghost"
+            class="ml-2"
+            @click="
+              () => {
+                searchQuery = '';
+                selectedCategory = '';
+              }
+            "
+          >
+            Clear filters
+          </UButton>
+        </div>
+
+        <div v-else class="shadow rounded-lg ring-2 ring-gray-200">
           <ul class="divide-y divide-gray-200">
             <li
-              v-for="question in questions"
+              v-for="question in paginatedQuestions"
               :key="question.id"
               class="p-4 hover:bg-pink-900 flex items-center justify-between"
             >
@@ -207,7 +329,7 @@ onMounted(() => {
         </div>
 
         <!-- Pagination Controls -->
-        <div class="mt-4 flex justify-center gap-2">
+        <div v-if="totalPages > 1" class="mt-4 flex justify-center gap-2">
           <UButton
             v-for="page in totalPages"
             :key="page"
@@ -218,9 +340,10 @@ onMounted(() => {
           </UButton>
         </div>
 
-        <!-- Questions count -->
+        <!-- Update Questions count -->
         <div class="mt-4 text-center text-sm text-gray-500">
-          Total Questions: {{ totalQuestions }}
+          Showing {{ paginatedQuestions.length }} of
+          {{ filteredQuestions.length }} questions
         </div>
       </div>
     </main>
