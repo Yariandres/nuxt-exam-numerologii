@@ -107,58 +107,40 @@ const validateForm = () => {
     answers: '',
   };
 
-  console.log('Validating form with values:', {
-    title: question.value.title,
-    category: question.value.category,
-    difficulty: question.value.difficulty,
-    explanation: question.value.explanation,
-    answersCount: question.value.answers.length,
-  });
-
   if (!question.value.title) {
-    console.log('Title validation failed');
     formErrors.value.title = 'Title is required';
     isValid = false;
   }
 
   if (!question.value.category) {
-    console.log('Category validation failed');
     formErrors.value.category = 'Category is required';
     isValid = false;
   }
 
   if (!question.value.difficulty) {
-    console.log('Difficulty validation failed');
     formErrors.value.difficulty = 'Difficulty is required';
     isValid = false;
   }
 
-  // Check if there are at least 2 answers
   if (question.value.answers.length < 2) {
-    console.log('Answers count validation failed');
     formErrors.value.answers = 'At least two answers are required';
     isValid = false;
   }
 
-  // Check if there is exactly one correct answer
   const correctAnswersCount = question.value.answers.filter(
     (a) => a.isCorrect
   ).length;
   if (correctAnswersCount !== 1) {
-    console.log('Correct answer validation failed');
     formErrors.value.answers = 'Exactly one answer must be marked as correct';
     isValid = false;
   }
 
-  // Check if all answers have text
   const emptyAnswers = question.value.answers.some((a) => !a.text.trim());
   if (emptyAnswers) {
-    console.log('Answer text validation failed');
     formErrors.value.answers = 'All answers must have text';
     isValid = false;
   }
 
-  console.log('Validation result:', { isValid, formErrors: formErrors.value });
   return isValid;
 };
 
@@ -186,87 +168,28 @@ const addAnswer = () => {
 
 // Update handleSubmit to handle deleted answers
 const handleSubmit = async () => {
-  console.log('Starting form submission...'); // Debug submission start
-
-  if (!validateForm()) {
-    console.log('Form validation failed'); // Debug validation
-    return;
-  }
+  if (!validateForm()) return;
 
   isSubmitting.value = true;
   error.value = '';
 
   try {
-    console.log('Updating question:', {
-      id: questionId,
-      title: question.value.title,
-      category: question.value.category,
-      difficulty: question.value.difficulty,
-      explanation: question.value.explanation,
-    }); // Debug question data
-
-    // Update question
-    const { error: questionError } = await supabase
-      .from('Question')
-      .update({
+    const response = await $fetch(`/api/admin/questions/${questionId}`, {
+      method: 'PUT',
+      body: {
         title: question.value.title,
         category: question.value.category,
         difficulty: question.value.difficulty,
         explanation: question.value.explanation,
-        updatedAt: new Date().toISOString(),
-      })
-      .eq('id', questionId);
+        answers: question.value.answers,
+        deletedAnswerIds: deletedAnswerIds.value,
+      },
+    });
 
-    if (questionError) {
-      console.error('Error updating question:', questionError); // Debug question error
-      throw questionError;
+    if (response.success) {
+      await router.push('/admin/dashboard');
     }
-
-    console.log('Question updated successfully'); // Debug question success
-
-    // Delete removed answers
-    if (deletedAnswerIds.value.length > 0) {
-      console.log('Deleting answers:', deletedAnswerIds.value); // Debug deletions
-
-      const { error: deleteError } = await supabase
-        .from('Answer')
-        .delete()
-        .in('id', deletedAnswerIds.value);
-
-      if (deleteError) {
-        console.error('Error deleting answers:', deleteError); // Debug deletion error
-        throw deleteError;
-      }
-
-      console.log('Answers deleted successfully'); // Debug deletion success
-    }
-
-    // Update remaining answers and add new ones
-    const answersToUpsert = question.value.answers.map((answer) => ({
-      id: answer.id || generateCuid(),
-      text: answer.text,
-      isCorrect: answer.isCorrect,
-      questionId: questionId,
-    }));
-
-    console.log('Upserting answers:', answersToUpsert); // Debug upsert data
-
-    const { error: answersError } = await supabase
-      .from('Answer')
-      .upsert(answersToUpsert);
-
-    if (answersError) {
-      console.error('Error upserting answers:', answersError); // Debug upsert error
-      throw answersError;
-    }
-
-    console.log('Answers updated successfully'); // Debug upsert success
-
-    // Redirect to dashboard
-    console.log('Redirecting to dashboard...'); // Debug redirect
-    await router.push('/admin/dashboard');
-  } catch (err) {
-    console.error('Error updating question:', err); // Detailed error logging
+  } catch (err: any) {
     error.value = `Failed to update question: ${err.message}`;
   } finally {
     isSubmitting.value = false;
