@@ -42,12 +42,12 @@ const shareUrls = computed(() => {
   };
 });
 
-const shareToSocial = (platform: string) => {
-  if (!shareUrls.value) return;
+// const shareToSocial = (platform: string) => {
+//   if (!shareUrls.value) return;
 
-  const url = shareUrls.value[platform as keyof typeof shareUrls.value];
-  window.open(url, '_blank', 'width=600,height=400');
-};
+//   const url = shareUrls.value[platform as keyof typeof shareUrls.value];
+//   window.open(url, '_blank', 'width=600,height=400');
+// };
 
 onMounted(async () => {
   const examSessionId = localStorage.getItem('examSessionId');
@@ -74,34 +74,34 @@ const retakeExam = async () => {
   await navigateTo('/');
 };
 
-const downloadCertificate = async () => {
-  const examSessionId = localStorage.getItem('examSessionId');
-  if (!examSessionId) return;
+// const downloadCertificate = async () => {
+//   const examSessionId = localStorage.getItem('examSessionId');
+//   if (!examSessionId) return;
 
-  isDownloading.value = true;
-  try {
-    // Fetch certificate as blob
-    const response = await $fetch(`/api/exam/certificate/${examSessionId}`, {
-      responseType: 'blob',
-    });
+//   isDownloading.value = true;
+//   try {
+//     // Fetch certificate as blob
+//     const response = await $fetch(`/api/exam/certificate/${examSessionId}`, {
+//       responseType: 'blob',
+//     });
 
-    // Create blob URL and trigger download
-    const blob = new Blob([response], { type: 'application/pdf' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `numerology-certificate-${examSessionId}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error('Failed to download certificate:', err);
-    error.value = 'Failed to download certificate. Please try again.';
-  } finally {
-    isDownloading.value = false;
-  }
-};
+//     // Create blob URL and trigger download
+//     const blob = new Blob([response], { type: 'application/pdf' });
+//     const url = window.URL.createObjectURL(blob);
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.download = `numerology-certificate-${examSessionId}.pdf`;
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+//     window.URL.revokeObjectURL(url);
+//   } catch (err) {
+//     console.error('Failed to download certificate:', err);
+//     error.value = 'Failed to download certificate. Please try again.';
+//   } finally {
+//     isDownloading.value = false;
+//   }
+// };
 
 const exitExam = async () => {
   // Clear all exam data
@@ -174,7 +174,8 @@ const exitExam = async () => {
           >
             Powtórz egzamin
           </UButton>
-          <div v-if="examResult.passed" class="flex space-x-4">
+          <!-- TODO: Add certificate download and exit exam button -->
+          <!-- <div v-if="examResult.passed" class="flex space-x-4">
             <UButton
               @click="downloadCertificate"
               :loading="isDownloading"
@@ -195,17 +196,17 @@ const exitExam = async () => {
             >
               Zakończ egzamin
             </UButton>
-          </div>
+          </div> -->
         </div>
 
         <!-- Social Share Buttons -->
-        <div v-if="examResult.passed" class="flex flex-col space-y-2">
-          <p class="text-center text-gray-600 font-medium">
+        <!-- <div v-if="examResult.passed" class="flex flex-col space-y-2"> -->
+        <!-- <p class="text-center text-gray-600 font-medium">
             Podziel się swoim osiągnięciem!
-          </p>
-          <div class="flex justify-center space-x-4">
-            <!-- Twitter -->
-            <UButton
+          </p> -->
+        <!-- <div class="flex justify-center space-x-4"> -->
+        <!-- Twitter -->
+        <!-- <UButton
               @click="shareToSocial('twitter')"
               color="gray"
               variant="ghost"
@@ -215,10 +216,10 @@ const exitExam = async () => {
                 name="i-simple-icons-twitter"
                 class="w-6 h-6 text-[#1DA1F2] group-hover:scale-110 transition-transform"
               />
-            </UButton>
+            </UButton> -->
 
-            <!-- Facebook -->
-            <UButton
+        <!-- Facebook -->
+        <!-- <UButton
               @click="shareToSocial('facebook')"
               color="gray"
               variant="ghost"
@@ -228,10 +229,10 @@ const exitExam = async () => {
                 name="i-simple-icons-facebook"
                 class="w-6 h-6 text-[#4267B2] group-hover:scale-110 transition-transform"
               />
-            </UButton>
+            </UButton> -->
 
-            <!-- LinkedIn -->
-            <UButton
+        <!-- LinkedIn -->
+        <!-- <UButton
               @click="shareToSocial('linkedin')"
               color="gray"
               variant="ghost"
@@ -241,10 +242,10 @@ const exitExam = async () => {
                 name="i-simple-icons-linkedin"
                 class="w-6 h-6 text-[#0A66C2] group-hover:scale-110 transition-transform"
               />
-            </UButton>
+            </UButton> -->
 
-            <!-- WhatsApp -->
-            <UButton
+        <!-- WhatsApp -->
+        <!-- <UButton
               @click="shareToSocial('whatsapp')"
               color="gray"
               variant="ghost"
@@ -254,9 +255,9 @@ const exitExam = async () => {
                 name="i-simple-icons-whatsapp"
                 class="w-6 h-6 text-[#25D366] group-hover:scale-110 transition-transform"
               />
-            </UButton>
-          </div>
-        </div>
+            </UButton> -->
+        <!-- </div> -->
+        <!-- </div> -->
       </div>
 
       <!-- Failed Questions Review -->

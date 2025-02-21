@@ -355,7 +355,7 @@ watch(
             {{ currentQuestion.category }}
           </span>
           <h1
-            class="text-2xl md:text-3xl font-bold text-gray-100 leading-relaxed text-balance font-[playfair] tracking-wide"
+            class="text-2xl md:text-3xl font-bold text-gray-100 leading-relaxed text-balance font-[playfair] tracking-wide bg-[#111827] rounded-lg p-4"
           >
             {{ currentQuestion.title }}
           </h1>
