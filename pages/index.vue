@@ -205,7 +205,7 @@ onMounted(() => {
 
           <ul class="list-disc pl-6 space-y-4 mb-8">
             <li class="text-lg text-gray-300 leading-relaxed">
-              Egzamin składa się z pytań wielokrotnego wyboru
+              Egzamin składa się z pytań jednokrotnego wyboru
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
               Musisz uzyskać minimum 70% punktów, aby zdać
