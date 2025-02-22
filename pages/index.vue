@@ -131,7 +131,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-900 relative overflow-hidden">
+  <div class="min-h-screen min-h-[100dvh] bg-gray-900 relative overflow-hidden">
     <!-- Animated Background -->
     <div class="absolute inset-0 overflow-hidden">
       <ClientOnly>
@@ -191,14 +191,14 @@ onMounted(() => {
         <StudentNavigation />
       </header>
 
-      <section class="max-w-3xl mx-auto px-4 py-12">
+      <section class="max-w-3xl mx-auto px-1 md:px-4 py-12">
         <h1
-          class="text-4xl md:text-5xl font-bold mb-8 text-gray-100 leading-tight tracking-tight font-[playfair]"
+          class="text-4xl text-center md:text-5xl md:text-left font-bold mb-8 text-gray-100 leading-tight tracking-tight font-[playfair]"
         >
           Witaj w Egzaminie Certyfikacyjnym z Szkoły Numerologii
         </h1>
 
-        <div class="rounded-xl bg-gray-800 shadow-2xl p-8 mb-8">
+        <div class="rounded-xl bg-gray-800 shadow-2xl p-4 md:p-8 mb-8">
           <h2 class="text-2xl font-semibold mb-8 text-gray-100 tracking-wide">
             Instrukcje egzaminu
           </h2>
