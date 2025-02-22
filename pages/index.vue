@@ -195,7 +195,7 @@ onMounted(() => {
         <h1
           class="text-4xl text-center md:text-5xl md:text-left font-bold mb-8 text-gray-100 leading-tight tracking-tight font-[playfair]"
         >
-          Witaj w Egzaminie Certyfikacyjnym z Szkoły Numerologii
+          Witaj w Egzaminie Certyfikacyjnym z Szkoły Numerologii - dev
         </h1>
 
         <div class="rounded-xl bg-gray-800 shadow-2xl p-4 md:p-8 mb-8">
