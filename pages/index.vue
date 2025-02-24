@@ -208,7 +208,7 @@ onMounted(() => {
               Egzamin składa się z pytań jednokrotnego wyboru
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
-              Musisz uzyskać minimum 70% punktów, aby zdać
+              Musisz uzyskać minimum 50% punktów, aby zdać
             </li>
             <li class="text-lg text-gray-300 leading-relaxed">
               Po udzieleniu odpowiedzi przejdziesz do następnego pytania

@@ -60,7 +60,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const score = correctAnswers / totalQuestions;
-    const passed = score >= 0.7; // 70% passing threshold
+    const passed = score >= 0.5; // Changed from 0.7 to 0.5 for 50% passing threshold
 
     // Update exam session with final results
     await prisma.examSession.update({
